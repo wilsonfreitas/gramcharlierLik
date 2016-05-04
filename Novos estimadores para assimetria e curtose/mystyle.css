@@ -1,0 +1,14 @@
+td, th {
+  padding: 6px;
+  margin: 10px;
+}
+
+td {
+  border: 1px solid black;
+}
+
+th {
+  color: white;
+  background-color: black;
+  border: 1px solid black;
+}

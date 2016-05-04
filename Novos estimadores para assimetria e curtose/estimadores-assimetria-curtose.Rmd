@@ -1,0 +1,385 @@
+---
+title: "Novos estimadores para assimetria e curtose"
+author: "Wilson Freitas"
+date: "18 de abril de 2016"
+output:
+  html_document:
+    css: mystyle.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Expansão em distribuições quase-gaussianas
+
+Sob certas condições uma pdf $p(x)$ pode ser expandida formalmente em uma série de derivadas de $Z(x)$, que é uma função densidade de probabilidade normal padronizada.
+Para isso temos a seguinte expansão em série
+
+$$
+p(x) = \sum_{n=0}^\infty c_n \frac{d^n Z(x)}{dx^n} = \sum_{n=0}^\infty c_n (-1)^n He_n(x) Z(x)
+$$
+
+que é uma série de Gram-Charlier (de tipo-A), onde:
+
+$$
+c_n = \frac{(-1)^n}{n!} \int_{-\infty}^{\infty} p(t) He_n(t) dt
+$$
+
+e $He_n(x)$ são polinômios de Chebyshev-Hermite de ordem $n$ e de acordo com a fórmula de Rodrigues podem ser obtidos a como:
+
+$$
+He_n(x) = (-1)^n e^{x^2/2} \frac{d^n}{dx^n} e^{-x^2/2}
+$$
+
+### Fórmulas importantes
+
+Produto interno de polinômios Chebyshev-Hermite:
+
+$$
+\int^\infty_{-\infty} e^{-x^2/2} He_n(x) He_m(x) dx = \delta_{mn} n! \sqrt{2\pi}
+$$
+
+## Distribuição de Gram-Charlier de ordem 4
+
+Truncando a série de Gram-Charlier no termo de ordem $n=4$ temos:
+
+$$
+p(x) = Z(x)\left[ 1 + \frac{\mu_3}{3!} (x^3 - 3x) + \frac{\mu_4 - 3}{4!} (x^4 - 6x^2 + 3) \right]
+$$
+
+onde $\mu_3 = E[x^3]$ e $\mu_4 = E[x^4]$ e a $x$ é uma variável aleatória padronizada e portanto estes momentos centralizados são assimetria e curtose, respectivamente.
+
+Estes momentos possuem estimadores amostrais dados por:
+
+$$
+\mu_3 = \frac{1}{N} \sum_{i=1}^{N} \frac{(x_i - \mu)^3}{\sigma^3}
+$$
+
+e
+
+$$
+\mu_4 = \frac{1}{N} \sum_{i=1}^{N} \frac{(x_i - \mu)^4}{\sigma^4}
+$$
+
+onde $\mu$ e $\sigma$ são os estimadores amostrais para média e desvio-padrão.
+Estes estimadores amostrais para assimetria e curtose apresentam grande sensibilidade a novas estradas na amostra e ao serem utilizados com janela móvel apresentam fortes oscilações e também valores muito atípicos.
+
+O objetivo aqui é utilizar a distribuição de Gram-Charlier para estimar a assimetria e curtose.
+
+## Novos estimadores para assimetria e curtose
+
+A assimetria e curtose serão estimados a partir da distribuição de Gram-Charlier paramétrica:
+
+$$
+p(x; \mu_3, \mu_4) = Z(x)\left[ 1 + \frac{\mu_3}{3!} (x^3 - 3x) + \frac{\mu_4 - 3}{4!} (x^4 - 6x^2 + 3) \right]
+$$
+
+via Máxima Verossimilhança.
+
+Entretanto a distribuição acima apresenta valores negativos de $p(x)$ para alguns valores de assimetria e curtose.
+Dessa forma é necessário delimitar a região do espaço paramétrico $(\mu_3, \mu_4)$ em que $p(x)$ sempre apresenta valores positivos.
+
+Uma forma fácil de observar isso é através da função de log-verossimilhança construída a partir dessa distribuição.
+
+$$
+l(\mu_3, \mu_4; \mathbf{x}) = \sum_{i=1}^N \log p(x_i; \mu_3, \mu_4)
+$$
+
+como a função $\log$ possui apenas suporte positivo, valores negativos de $p(x)$ apresentarão erros quando calculados numericamente.
+
+### Observando a região de validade da Distribuição de Gram-Charlier
+
+Dada a distribuição de Gram-Charlier e a sua função de verossimilhança
+
+```{r}
+dgramcharlier <- function(x, mu3=0, mu4=3) {
+  psi <- function(x) ( 1 + mu3*(x^3 - 3*x)/6 + (mu4 - 3)*(x^4 - 6*x^2 + 3)/24 )
+  dnorm(x)*psi(x)
+}
+
+gclogLik <- function(x) {
+  function(parms) {
+    gc <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
+    if (any( gc < 0 ))
+      NA
+    else
+      -sum(log(gc))
+  }
+}
+```
+
+Vamos gerar um *grid* com possíveis valores de assimetria e curtose e colocar em um gráfico 2D da função de verossimilhança pelos seus parâmetros $\mu_3$ e $\mu_4$.
+<!-- não é livre para todo o espaço paramétrico definido por $\mu_3$ e $\mu_4$ de forma que é necessário limitar a região deste espaço em que $p(x)$ é uma densidade de probabilidade válida. -->
+
+Vamos considerar uma amostra aleatória normal.
+
+```{r cache=TRUE}
+set.seed(0)
+y <- rnorm(1000)
+comb <- expand.grid(mu3=seq(-1.2, 1.2, length.out = 100),
+                    mu4=seq(2, 7, length.out = 100))
+
+logLik <- gclogLik(y)
+z <- sapply(seq_len(dim(comb)[1]), function(i) {
+  parms <- as.numeric(comb[i,])
+  logLik(parms)
+})
+
+comb$ll <- z
+h <- hist(z, 10, plot = FALSE)
+comb$llgroups <- cut(z, h$breaks)
+
+ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
+  geom_jitter() +
+  annotate('text', label='X',
+           y=timeDate::skewness(y), x=timeDate::kurtosis(y, method='moment'))
+```
+
+Outra alternativa é considerar a série do IBOVESPA de 1997 até 2014.
+Mas antes devemos baixar a série, calcular os retornos e padronizá-los.
+
+```{r cache=TRUE}
+x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+x <- diff(log(x$Adjusted.Close))
+x <- scale(x)
+bove <- x
+```
+
+Agora vamos construir um *grid* para as variáveis $\mu_3$ e $\mu_4$, aplicar a função de verissimilhança a amostra e aplicá-la aos parâmetros do *grid*.
+
+```{r cache=TRUE}
+comb <- expand.grid(mu3=seq(-1.2, 1.2, length.out = 100),
+                    mu4=seq(3, 17, length.out = 100))
+
+logLik <- gclogLik(x)
+z <- sapply(seq_len(dim(comb)[1]), function(i) {
+  parms <- as.numeric(comb[i,])
+  logLik(parms)
+})
+
+comb$ll <- z
+h <- hist(z, 10, plot = FALSE)
+comb$llgroups <- cut(z, h$breaks)
+```
+
+Agora podemos observar a função de verossimilhança dos retornos do IBOVESPA no espaço paramétrico.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+```
+
+```{r}
+ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
+  geom_jitter() +
+  annotate('text', label='X',
+           y=timeDate::skewness(x), x=timeDate::kurtosis(x, method='moment'))
+```
+
+Para utilizarmos a função de log-verossimilhança em um processo numérico para estimar a assimetria e a curtose, é necessário encontrar uma forma funcional na qual seja possível tratar as restrições de forma analítica e de preferência sem condicionais.
+
+### Encontrando a região de validade
+
+Como pudemos observar nos gráficos temos um plano $(\mu_3, \mu_4)$ onde a região que define o "ovo" nos gráficos acima é a região de validade para os parâmetros $\mu_3$ e $\mu_4$.
+Portanto, queremos encontar esta região e para isso vamos começar determinando a borda dessa região.
+
+Queremos valores para $\mu_3$ e $\mu_4$ tais que $p(x)$ seja positivo definido para qualquer $x$.
+Observando a distribuição de Gram-Charlier temos que o seguinte polinômio deve ser sempre positivo para qualquer $x$.
+
+$$
+f(x) = 1 + \frac{\mu_3}{6} He_3(x) + \frac{(\mu_4 - 3)}{24} He_4(x) \geq 0
+$$
+
+A borda dessa região é definida por
+
+$$
+f(x) = 1 + \frac{\mu_3}{6} He_3(x) + \frac{(\mu_4 - 3)}{24} He_4(x) = 0
+$$
+
+que define uma linha no plano $(\mu_3, \mu_4)$ para cada valor de $x$.
+Derivando $f(x)$ e igualando a zero temos uma função que é independente de $x$, no sentido que para qualquer valor de $x$ essa derivada é nula.
+
+$$
+f^\prime(x) = \frac{\mu_3}{3} He_2(x) + \frac{(\mu_4 - 3)}{6} He_3(x) = 0
+$$
+
+Com isso podemos construir um sistema linear para encontrar $\mu_3$ e $\mu_4$ como funções de $x$, pois na primeira equação definimos a restrição em relação a $x$ e na segunda temos uma restrição mais geral para qualquer valor de $x$.
+As soluções $\mu_3$ e $\mu_4$ para este sistema determinam a borda do "ovo" observado nos gráficos acima.
+
+A solução do sistema é dada por:
+
+$$
+\mu_3(x) = -24\frac{He_3(x)}{d(x)}
+$$
+
+e
+
+$$
+\mu_4(x) = 72\frac{He_2(x)}{d(x)} + 3
+$$
+
+onde $d(x) = 4He_3^2(x) - 3He_2(x) He_4(x)$.
+
+Agora é necessário analisar estas equações para determinar as regiões em $x$ para que $\mu_3(x)$ e $\mu_4(x)$ tenham valores válidos.
+Sabemos que $\mu_3(x) \ge 0$ ou $\mu_3(x) \lt 0$ e que $\mu_4(x) \ge 3$, com base nisso chegamos as seguintes regiões para $x$.
+
+Restrições | Regiões de $x$
+---------- | --------------
+$\mu_3 \lt 0$ | $x \gt \sqrt{3} \cup -\sqrt{3} \lt x \lt 0$
+$\mu_3 \ge 0$ | $x \le -\sqrt{3} \cup 0 \lt x \lt \sqrt{3}$
+$\mu_4 \lt 3$ | $-1 \lt x \lt 1$
+$\mu_4 \ge 3$ | $x \ge 1 \cup x \le -1$
+
+Tomando a intercecção das restrições válidas chegamos a 2 conjuntos para $x$
+
+- $x \in (-\infty -\sqrt{3}) \cup (\sqrt{3}, \infty)$ (menor)
+- $x \in (-\sqrt{3}, \sqrt{3})$ (maior — admite valores inválidos para $\mu_4$)
+
+Note que estes conjuntos definem regiões de $x$ onde o polinômio da equação de Gram-Charlier é igual a zero e consequentemente, os valores de $\mu_3$ e $\mu_4$ são válidos dentro dessa restrição.
+
+```{r}
+d_poly <- function(x) {
+  2*(x^3 - 3*x)^2 - 1*(x^2 - 1)*(x^4 - 6*x^2 + 3)
+}
+
+mu3 <- function(x) {
+  -12 * (x^3 - 3*x)/d_poly(x)
+}
+
+mu4 <-function(x) {
+  24 * (x^2 - 1)/d_poly(x) + 3
+}
+
+x <- seq(-sqrt(3), sqrt(3), length.out=100)
+plot(data=cbind(mu3=mu3(x), mu4=mu4(x)), mu3 ~ mu4, type='l', col='blue')
+x <- c(seq(-10, -sqrt(3), length.out=100), seq(sqrt(3), 10, length.out=100))
+lines(data=cbind(mu3=mu3(x), mu4=mu4(x)), mu3 ~ mu4, type='l', col='red')
+```
+
+### Eliminando as restrições
+
+Como observamos nos intervalos e no gráfico acima, a busca de parâmetros $(\mu_3, \mu_4)$ deve ser restrita ao *ovo*.
+Onder podemos constatar que $\mu_4 \in [3,7]$ e $\mu_3$ é função de $\mu_4$, mas também possui um intervalo finito de validade.
+Dessa forma, podemos aplicar uma transformação em $\mu_3$ e $\mu_4$ para eliminar essa restrição.
+Considerando $\mu_4 = f(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})$ onde $f(x, l_{inf}, l_{sup}) = l_{inf} + \frac{(l_{sup} - l_{inf})}{1 - e^{-x}}$.
+Essa função $f$ tem o seguinte comportamento:
+
+```{r}
+ff <- function(x, a, b) a + (b - a)/(1 + exp(-x))
+x_ <- seq(-10, 10, length.out=1000)
+df_ <- data.frame(x=x_, y=ff(x_, 3, 7))
+plot(y ~ x, data=df_, type="l", col="darkgreen")
+abline(h=c(3, 7), col="grey")
+```
+
+A partir de $\mu_4^\prime$ encontramos $\mu_4$ e com isso aplicamos a função do *ovo* para encontrar os limites para $\mu_3$ ($\mu_{3,inf}$ e $\mu_{3,sup}$ como função de $\mu_4$) e utilizamos a função $f$ para a partir de $\mu_3^\prime$ encontrar $\mu_3$.
+Com essa transformação analítica eliminamos o problema de restrição da busca por $\mu_3$ e $\mu_4$ pois o problema passa a ser posto em termos de $\mu_3^\prime$ e $\mu_4^\prime$.
+
+### Otimizando
+
+```{r}
+gcUnconstrainedlogLik <- function(x) {
+  function(parms) {
+    parms <- uncons_regionD(parms[1], parms[2])
+    gc <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
+    gc <- abs(gc)
+    -sum(log(gc))
+  }
+}
+
+d_poly <- function(x) {
+  2*(x^3 - 3*x)^2 - 1*(x^2 - 1)*(x^4 - 6*x^2 + 3)
+}
+
+mu3 <- function(x) {
+  -12 * (x^3 - 3*x)/d_poly(x)
+}
+
+mu4 <-function(x) {
+  24 * (x^2 - 1)/d_poly(x) + 3
+}
+
+regionD <- function(x) {
+  dm <- cbind(x=x, mu3=mu3(x), mu4=mu4(x))
+  idx <- order(dm[,'mu4'])
+  dm[idx,]
+}
+
+adj_seq <- function(start, end, a=-3, length.out=100) {
+  x <- seq(start^a, end^a, length.out=length.out)
+  x^(1/a)
+}
+
+create_uncons_regionD <- function() {
+  x <- adj_seq(sqrt(3), 100)
+  rd <- regionD(x)
+  rd_curve <- approxfun(rd[,'mu4'], rd[,'mu3'])
+  ff <- function(x, a, b) a + (b - a)/(1 + exp(-x))
+  function(mu3p, mu4p) {
+    mu4 <- ff(mu4p, 3, 7)
+    mu3_l <- rd_curve(mu4)
+    mu3_u <- -mu3_l
+    mu3 <- ff(mu3p, mu3_l, mu3_u)
+    c(mu3, mu4)
+  }
+}
+
+uncons_regionD <- create_uncons_regionD()
+```
+
+Para a amostra aleatória
+
+```{r}
+x <- y
+logLik <- gcUnconstrainedlogLik(x)
+
+res <- optim(c(0, 3), logLik, method='BFGS')
+```
+
+```{r results='asis', echo=FALSE}
+rows <- rbind(
+  uncons_regionD(res$par[1], res$par[2]),
+  c(timeDate::skewness(x), timeDate::kurtosis(x, method='moment'))
+)
+colnames(rows) <- c('Assimetria', 'Curtose')
+rownames(rows) <- c("MLE", "Amostra")
+knitr::kable(rows, format="html")
+```
+
+```{r, fig.show='hold'}
+.x <- sort(x)
+parms <- uncons_regionD(res$par[1], res$par[2])
+plot(.x, dgramcharlier(.x, parms[1], parms[2]), type='l')
+abline(h=0, col="red")
+plot(.x, dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')), type='l')
+abline(h=0, col="red")
+```
+
+Para o IBOVESPA
+
+```{r}
+x <- bove
+logLik <- gcUnconstrainedlogLik(x)
+
+res <- optim(c(0, 3), logLik, method='BFGS')
+```
+
+```{r results='asis', echo=FALSE}
+rows <- rbind(
+  uncons_regionD(res$par[1], res$par[2]),
+  c(timeDate::skewness(x), timeDate::kurtosis(x, method='moment'))
+)
+colnames(rows) <- c('Assimetria', 'Curtose')
+rownames(rows) <- c("MLE", "Amostra")
+knitr::kable(rows, format="html")
+```
+
+```{r, fig.show='hold'}
+.x <- sort(x)
+parms <- uncons_regionD(res$par[1], res$par[2])
+plot(.x, dgramcharlier(.x, parms[1], parms[2]), type='l')
+abline(h=0, col="red")
+plot(.x, dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')), type='l')
+abline(h=0, col="red")
+```
+

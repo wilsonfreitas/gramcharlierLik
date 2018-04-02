@@ -1,0 +1,615 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Estimadores de Máxima Verossimilhança para Assimetria e Curtose usando a expansão de Gram-Charlier},
+            pdfauthor={Wilson Freitas},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Estimadores de Máxima Verossimilhança para Assimetria e Curtose usando a
+expansão de Gram-Charlier}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Wilson Freitas}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{18 de abril de 2018}
+
+
+\begin{document}
+\maketitle
+
+\subsection{Resumo}\label{resumo}
+
+A estimação da assimetria e da curtose em séries de retornos é explorada
+neste artigo com o objetivo de prover uma alternativa aos estimadores
+amostrais comumente utilizados. Os estimadores amostrais para assimetria
+e curtose apresentam grande sensibilidade a novas ocorrências nas séries
+temporais. Esta sensibilidade é inerente a estes estimadores, sendo
+difícil de ser explicada pela dinâmica observada nos dados. O objetivo
+deste texto é apresentar estimadores de assimetria e curtose menos
+sensíveis, que consideram uma expansão em série de momentos, a expansão
+Gram-Charlier. A expansão de Gram-Charlier é aplicada a distribuição
+Gaussiana na construção de uma função de densidade de probabilidade
+paramétrica com relação a assimetria e curtose. Utilizamos o método de
+máxima verossimilhança (MV) para obter a assimetria e curtose na
+expansão de Gram-Charlier. Observamos mais estabilidade nestes
+estimadores do que nos amostrais. Esta estabilidade é importante na
+aplicação da expansão de Gram-Charlier a problemas de finanças, por
+exemplo o apreçamento de opções.
+
+\subsection{Introdução}\label{introducao}
+
+Qualquer função de densidade de probabilidade (FDP) pode ser aproximada
+por uma expansão em série de outra FDP que pertence a um grupo especial,
+como a distribuição Gaussiana, por exemplo. Dada uma amostra, é difícil
+identificar a melhor distribuição para descrevê-la, logo, a utilização
+expansões em séries permite associar uma FDP aproximada aos dados. A FDP
+aproximada é uma expansão em série de uma distribuição conhecida e em
+geral padronizada, esta é a distribuição base. Esta aproximação permite
+lidar com momentos que não estão presentes na distribuição base. Por
+exemplo, a distribuição Gaussiana não possui os momentos de assimetria e
+curtose, entretanto, na expansão em série da Gaussiana estes momentos
+são parâmetros. Portanto, se os dados apresentam assimetria e curtose, a
+distribuição Gaussiana não é uma candidata, contudo, a sua expansão é.
+As expansões de FDPs em séries têm aplicações em diversos campos da
+ciência como a Física e Finanças. Este texto explora o uso da expansão
+de Gram-Charlier ~{[}1{]} que é a expansão da distribuição Gaussiana em
+uma base de polinônmios de Hermite.
+
+\begin{itemize}
+\tightlist
+\item
+  Sessão 1: assimetria e curtose
+\item
+  Sessão 2: expansão de Gram-Charlier
+\item
+  Sessão 3: estimação da assimetria e curtose com a expansão de
+  Gram-Charlier
+\item
+  Sessão 4: resultados
+\item
+  Sessão 5: conclusão
+\end{itemize}
+
+\subsection{Assimetria e curtose}\label{assimetria-e-curtose}
+
+Seja uma amostra aleatória \(\{x_i\}_{i=1...N}\), de média amostral
+\(\mu\) e variância amostral \(\sigma^2\). Os estimadores amostrais de
+assimetria \(\mu_3\) e curtose \(\mu_4\) são definidos como:
+
+\[
+\begin{split}
+\mu_3 & = \frac{1}{N} \sum_{i=1}^{N} \frac{(x_i - \mu)^3}{\sigma^3} \\ \\
+\mu_4 & = \frac{1}{N} \sum_{i=1}^{N} \frac{(x_i - \mu)^4}{\sigma^4}
+\end{split}
+\]
+
+Estes estimadores apresentam grande sensibilidade a pequenas mudanças na
+amostra. Em séries de retornos diários observam-se mudanças de nível
+devido a presença retornos atípicos causados por fortes oscilações no
+mercado. Há casos onde apenas um retorno atípico causa uma variação
+significativa. Estas fortes mudanças podem ser notadas ao se calcular a
+assimetria e curtose em uma janela móvel aplicada a série de retorno.
+Observam-se fortes mudanças de regime em períodos de aumento
+volatilidade no mercado. A Figura \ref{fig:skewness-kurtosis-ma}
+apresenta os gráficos da série de retornos padronizados do IBOVESPA e os
+estimadores de assimetria, curtose e do desvio padrão em janela móvel. A
+série de retornos do IBOVESPA é referente ao período de janeiro de 2000
+a dezembro de 2017 (17 anos) e os retornos são contínuos. A janela móvel
+de dois anos (504 dias úteis) é utilizada para o cálculo das médias
+móveis.
+
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-3-1.pdf}
+\caption{\label{fig:skewness-kurtosis-ma} Os gráficos de retornos
+padronizados do IBOVESPA (i) e suas médias móveis de dois anos: (ii)
+desvio padrão, (iii) curtose e (iv) assimetria.}
+\end{figure}
+
+Nos gráficos de média móvel de assimetria e curtose, na Figura
+\ref{fig:skewness-kurtosis-ma}, é possível observar que em diversos
+momentos há mudanças de nível significativas, relacionadas a períodos de
+maior volatilidade nos retornos. Entretanto, o gráfico com a média móvel
+do desvio padrão, apresenta um comportamento mais suave, nos mesmos
+períodos.
+
+A expansão de Gram-Charlier é apresentada na próxima sessão. Através
+desta expansão chega-se a uma distribuição paramétrica na assimetria e
+na curtose. A partir desta distribuição é possível obter estimadores de
+máxima verossimilhança para estas grandezas relacionadas a esta
+distribuição.
+
+\subsection{Expansão de Gram-Charlier}\label{expansao-de-gram-charlier}
+
+Sob certas condições uma função de distribuição de probabilidade (FDP)
+\(p(x)\), padronizada, pode ser expandida em uma série de derivadas da
+distribuição Gaussiana padronizada
+\(Z(x) = \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{x^2}{2}\right)\). A
+expansão em série
+
+\[
+p(x) \sim \sum_{n=0}^\infty c_n \frac{d^n Z(x)}{dx^n}
+\]
+
+é uma série de Gram-Charlier (de tipo-A) {[}REF{]} e de acordo com a
+fórmula de Rodriguez {[}REF{]}
+
+\[
+He_n(x) = (-1)^n \exp\left( \frac{x^2}{2} \right) \frac{d^n}{dx^n} \exp\left( -\frac{x^2}{2} \right)
+\]
+
+são polinômios de Chebyshev-Hermite de ordem \(n\). Substituindo a
+fórmula de Rodriguez na equação de \(p(x)\) obtem-se uma expansão em
+série de polinômios de Chebyshev-Hermite e da distribuição Gaussiana.
+
+\[
+p(x) \sim \sum_{n=0}^\infty c_n (-1)^n He_n(x) Z(x)
+\]
+
+onde os coeficientes
+
+\[
+c_n = \frac{(-1)^n}{n!} \int_{-\infty}^{\infty} p(t) He_n(t) dt
+\]
+
+são valores esperados dos polinômios de Chebyshev-Hermite com relação a
+FDP \(p(x)\). Os coeficientes \(c_n\) são funções dos momentos da
+distribuição \(p(x)\), logo, a expansão de Gram-Charlier é uma expansão
+em momentos da distribuição \(p(x)\).
+
+Assumindo uma abordagem parsimoniosa e a dificuldade em se trabalhar com
+séries infinitas, é razoável truncar a expansão \(p(x)\) em uma
+quantidade finita de termos, \(n < \infty\). Uma boa escolha é \(n=4\),
+pois, a expansão vai até os polinômios de ordem 4 gerando assim os
+momentos de assimetria e curtose. Esta escolha produz a seguinte
+aproximação para \(p(x)\)
+
+\[
+p(x) \sim Z(x)\left[ 1 + \frac{\mu_3}{3!} (x^3 - 3x) + \frac{\mu_4 - 3}{4!} (x^4 - 6x^2 + 3) \right]
+\]
+
+Note que além da distribuição Gaussiana \(Z(x)\), \(p(x)\) é função dos
+terceiro e quarto momentos, \(\mu_3 = E[x^3]\) e \(\mu_4 = E[x^4]\) da
+variável aleatória \(x\) padronizada. Logo, estes momentos centralizados
+são assimetria e curtose, respectivamente. O truncamento da expansão de
+Gram-Charlier em termos até a ordem \(n=4\) produz uma função
+paramétrica na assimetria e na curtose, logo,
+\(p(x) \equiv p(x;\mu_3,\mu_4)\). Esta função é uma extensão da
+distribuição Gaussiana que incorpora assimetria e curtose, entretanto,
+para que \(p(x)\) seja considerada uma FDP é necessário que as seguintes
+restrições sejam atendidas:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\int_{-\infty}^{\infty}p(x) dx = 1\)
+\item
+  \(p(x)\) seja contínua em todo suporte
+\item
+  \(p(x)\) seja não negativa, para todo \(x\)
+\end{itemize}
+
+Os dois primeiros pontos são fáceis de comprovar, integrando e derivando
+\(p(x)\). Contudo, o terceiro ponto não é direto. Há de fato, valores de
+assimetria e curtose para os quais a função \(p(x)\) é negativa. Na
+próxima sessão serão apresentadas as retrições de positividade para
+\(p(x)\), nas quais os momentos podem assumir valores onde esta função
+seja sempre não negativa. Uma vez atendida a restrição de positividade,
+podemos considerar \(p(x)\) uma FDP e ela poderá ser utilizada para
+descrever variáveis aleatórias como séries de retornos. Estas séries
+comumente apresentam desvios da normalidade, como retornos extremos e
+oscilações assimétricas.
+
+\subsubsection{\texorpdfstring{Restrições de positividade para
+\(p(x)\)}{Restrições de positividade para p(x)}}\label{restricoes-de-positividade-para-px}
+
+Seja a função \(p(x;\mu_3, \mu_4)\) definida na sessão anterior
+
+\[
+p(x; \mu_3, \mu_4) = Z(x)\left[ 1 + \frac{\mu_3}{3!} (x^3 - 3x) + \frac{\mu_4 - 3}{4!} (x^4 - 6x^2 + 3) \right]
+\]
+
+Esta função apresenta valores negativos de \(p(x)\) para alguns valores
+de assimetria e curtose. Isso pode ser observado escrevendo esta função
+com uma função de log-verossimilhança \(l(\mu_3, \mu_4; \mathbf{x})\),
+que é função dos momentos e é paramétrica em
+\(\mathbf{x} \equiv \{x_i\}_{i=1...N}\), uma amostra aleatória. Logo, a
+função
+
+\[
+l(\mu_3, \mu_4; \mathbf{x}) = \sum_{i=1}^N - \log p(x_i; \mu_3, \mu_4)
+\]
+
+seria uma função \emph{pseudo} log-verossimilhança, onde \emph{pseudo}
+quer dizer que esta função diverge para alguns valores dos momentos.
+Isso acontece porque a função \(\log\) possui apenas suporte positivo e
+valores negativos de \(p(x)\) apresentarão descontinuidades quando
+calculados numericamente.
+
+Para observar a região de \emph{validade} dos momentos na função
+\(p(x)\) será gerado um \emph{grid} com possíveis valores de \(\mu_3\) e
+\(\mu_4\) e para cada par será calculada a função
+\(l(\mu_3, \mu_4; \mathbf{x})\) para uma amostra aleatória. O resultado
+será visualizado em um gráfico 2D onde o eixo y é a assimetria e o eixo
+x a curtose. Os pontos no gráfico são os valores obtidos da função
+\(l(\mu_3, \mu_4; \mathbf{x})\) referente ao par de assimetria e
+curtose. Os valores da função \(l(\mu_3, \mu_4; \mathbf{x})\) serão
+segmentados de maneira que possamos observar a região do espaço
+paramétrico onde a função apresenta o seu máximo. Nesta simulação
+considera-se uma amostra aleatória normal com 1000 elementos e os
+momentos gerados de acordo com os seguintes intervalos:
+\(\mu_3 \in [-1.2, 1.2]\) e \(\mu_4 \in [2, 7]\).
+
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-6-1.pdf}
+\caption{\label{fig:random-heatmap} O gráfico acima é um
+\textit{heatmap} da função \(l(\mu_3, \mu_4; \mathbf{x})\) para uma
+amostra aleatória normal. Os valores da função de log-verossimilhança
+são segmentados de forma que é possível identificar que a região em
+torno dos momentos populacionais, \(\mu_3=0\) e \(\mu_4 = 3\), apresenta
+a maior verossimilhança. O ponto marcado com X indica os valores
+amostrais de assimetria e curtose. Os pontos escuros onde a função de
+log-verissimilhança é NA indicam que houve divergência no cálculo.
+Portanto, na região definida por estes pontos a função \(p(x)\)
+apresenta valores negativos, assim como na região de pontos coloridos
+\(p(x)\) apresenta valores não negativos.}
+\end{figure}
+
+Observando a Figura \ref{fig:random-heatmap} fica claro que há uma
+região bem definida para a qual os valores de assimetria e curtose
+produzem uma função \(p(x)\) não negativa e portanto, nesta região,
+\(p(x)\) pode ser considerada uma FDP.
+
+A título de ilustração a Figura \ref{fig:ibovespa-heatmap} mostra o
+\emph{heatmap} onde a série de retornos padronizados do IBOVESPA é
+utilizada como amostra aleatória.
+
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-9-1.pdf}
+\caption{\label{fig:ibovespa-heatmap} O gráfico mostra o
+extit\{heatmap\} da função de log-verossimilhança aplicada a série de
+retornos padrinizados do IBOVESPA no período de jan/2000 a dez/2017.
+Nota-se que a região de máxima verossimilhança desloca-se para onde a
+assimetria é negativa e a curtose é um pouco acima de 4, indicando uma
+distribuição assimétrica e com caudas pesadas. Entretanto, os
+estimadores amostrais ficam próximos a borda da região válida, muito
+distantes da região de máxima verossimilhança.}
+\end{figure}
+
+Para utilizarmos a função de log-verossimilhança em um processo numérico
+para estimar a assimetria e a curtose, é necessário encontrar uma forma
+funcional para \(p(x)\) na qual seja possível tratar as restrições de
+\(\mu_3\) e \(\mu_4\) de forma analítica e de preferência, sem
+condicionais. Como observa-se nas Figuras \ref{fig:random-heatmap} e
+\ref{fig:ibovespa-heatmap} há um plano de coordenadas \((\mu_3, \mu_4)\)
+onde a região definida por uma figura oval nos gráficos é a região de
+validade para os parâmetros \(\mu_3\) e \(\mu_4\). Vamos começar
+determinando a borda dessa região.
+
+Queremos valores para \(\mu_3\) e \(\mu_4\) tais que \(p(x)\) seja
+positivo definido para qualquer \(x\). Observando \(p(x)\) temos que o
+seguinte polinômio deve ser sempre positivo para qualquer \(x\).
+
+\[
+f(x) = 1 + \frac{\mu_3}{6} He_3(x) + \frac{(\mu_4 - 3)}{24} He_4(x) \geq 0
+\] onde \(He_3(x) = x^3 - 3x\) e \(He_4(x) = x^4 - 6x^2 + 3\) são
+polinômios de Chebyshev-Hermite. A borda dessa região é definida por
+
+\[
+f(x) = 1 + \frac{\mu_3}{6} He_3(x) + \frac{(\mu_4 - 3)}{24} He_4(x) = 0
+\]
+
+que define uma linha no plano \((\mu_3, \mu_4)\) para cada valor de
+\(x\). Derivando \(f(x)\) e igualando a zero temos uma função que é
+independente de \(x\), no sentido que para qualquer valor de \(x\) essa
+derivada é nula.
+
+\[
+f^\prime(x) = \frac{\mu_3}{2} He_2(x) + \frac{(\mu_4 - 3)}{6} He_3(x) = 0
+\]
+
+Com isso podemos construir um sistema linear para encontrar \(\mu_3\) e
+\(\mu_4\) como funções de \(x\), pois na primeira equação definimos a
+restrição em relação a \(x\) e na segunda temos uma restrição mais geral
+para qualquer valor de \(x\). As soluções \(\mu_3\) e \(\mu_4\) para
+este sistema determinam a borda da região oval observada nas Figuras
+\ref{fig:random-heatmap} e \ref{fig:ibovespa-heatmap}. A solução do
+sistema é dada por:
+
+\[
+\begin{split}
+\mu_3(x) &= -24\frac{He_3(x)}{d(x)} \\
+\mu_4(x) &= 72\frac{He_2(x)}{d(x)} + 3
+\end{split}
+\]
+
+onde \(d(x) = 4He_3^2(x) - 3He_2(x) He_4(x)\).
+
+Agora é necessário analisar estas equações para determinar as regiões em
+\(x\) para que \(\mu_3(x)\) e \(\mu_4(x)\) tenham valores válidos.
+Sabemos que \(\mu_3(x) \geq 0\) ou \(\mu_3(x) < 0\) e que
+\(\mu_4(x) \geq 3\), com base nisso chega-se as seguintes regiões para
+\(x\).
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Restrições & Regiões de \(x\)\tabularnewline
+\midrule
+\endhead
+\(\mu_3 < 0\) & \(x > \sqrt{3} \cup -\sqrt{3} < x < 0\)\tabularnewline
+\(\mu_3 \geq 0\) &
+\(x \leq -\sqrt{3} \cup 0 < x < \sqrt{3}\)\tabularnewline
+\(\mu_4 < 3\) & \(-1 < x < 1\)\tabularnewline
+\(\mu_4 \geq 3\) & \(x \geq 1 \cup x \leq -1\)\tabularnewline
+\bottomrule
+\end{longtable}
+
+Tomando a intercecção das restrições válidas chegamos a 2 conjuntos para
+\(x\)
+
+\begin{itemize}
+\tightlist
+\item
+  \(x \in (-\infty, -\sqrt{3}) \cup (\sqrt{3}, \infty)\) (menor)
+\item
+  \(x \in (-\sqrt{3}, \sqrt{3})\) (maior --- admite valores inválidos
+  para \(\mu_4\))
+\end{itemize}
+
+Note que estes conjuntos definem regiões de \(x\) onde o polinômio
+\(f(x)\) da expansão de Gram-Charlier é igual a zero e consequentemente,
+os valores de \(\mu_3\) e \(\mu_4\) são válidos dentro dessa restrição.
+
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-10-1.pdf}
+\caption{\label{fig:eggs} Regiões de assimetria e curtose para que a
+expansão de Gram-Charlier seja não negativa. A região maior (azul), onde
+\(x \in (-\sqrt{3}, \sqrt{3})\), admite valores negativos para curtose,
+o que não é permitido, pois este momento é positivo. A menor região
+(vermelho) admite valores válidos para assimetria e curtose e
+\(x \in (-\infty, -\sqrt{3}) \cup (\sqrt{3}, \infty)\).}
+\end{figure}
+
+Como observa-se na Figura \ref{fig:eggs}, a busca de parâmetros
+\((\mu_3, \mu_4)\) deve ser restrita a região oval em que
+\(\mu_4 \in [3,7]\) e \(\mu_3 \equiv \mu_3(\mu_4)\). Na borda dessa
+região tem-se que
+\(x \in (-\infty, -\sqrt{3}) \cup (\sqrt{3}, \infty)\). Estas restrições
+colocadas para \(\mu_3\) e \(\mu_4\) não são desejáveis para a
+utilização de \(p(x)\) como uma FDP em um processo de estimação por
+máxima-verossimilhança. Para realizar a estimação destes parâmetros por
+máxima-verossimilhança seria necessário introduzir uma restrição
+funcional aos parâmetros. Para contornar este problema vamos aplicar uma
+transformação a \(\mu_3\) e \(\mu_4\) de maneira que seja possível
+eliminar essa restrição criando novas variáveis \(\mu_3^\prime\) e
+\(\mu_4^\prime\) irrestritas.
+
+Considerando \(\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})\) onde
+\(g(x, l_{inf}, l_{sup}) = l_{inf} + \frac{(l_{sup} - l_{inf})}{1 - e^{-x}}\).
+Dessa maneira, a partir de \(\mu_4^\prime\) (irrestrito) encontramos
+\(\mu_4\) e com isso aplicamos a função que delimita a região oval para
+encontrar os limites de \(\mu_3\) (\(\mu_{3,inf}\) e \(\mu_{3,sup}\)
+como função de \(\mu_4\)). Utilizamos a função
+\(\mu_3 = g(\mu_3^\prime, \mu_{3,inf}, \mu_{3,sup})\) para a partir de
+\(\mu_3^\prime\) encontrar \(\mu_3\). Com essa transformação analítica
+elimina-se o problema de restrição da busca por \(\mu_3\) e \(\mu_4\)
+pois o problema passa a ser posto em termos de \(\mu_3^\prime\) e
+\(\mu_4^\prime\). A Figura \ref{fig:limit-transform} mostra o gráfico da
+função \(g(x)\) aplicada a curtose
+\(\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})\).
+
+Desta forma, a função de log-verossimilhança pode ser reescrita como
+\(l(\mu_3(\mu_3^\prime), \mu_4(\mu_4^\prime); \mathbf{x}) \equiv l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})\).
+Assim a função \(p(x)\) gerada a partir da expansão de Gram-Charlier
+passa a atender a restrição de positividade e portanto pode ser
+considerada uma FDP. \(p(x)\) pode ser utilizada para encontrar os
+estimadores de máxima-verossimilhança para assimetria e curtose. Na
+próxima sessão será realizada a estimação dos parâmetros para uma
+amostra aleatória normal e para a série de retornos padronizados do
+IBOVESPA.
+
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-11-1.pdf}
+\caption{\label{fig:limit-transform} Função \(g(x)\) para realizar uma
+transformação analítica em \(\mu_3\) e \(\mu_4\) de maneira tornar um
+problema de busca restrito em um problema irrestrito. Aqui tem-se
+\(g(\mu_4^\prime, 3, 7)\).}
+\end{figure}
+
+\subsection{Estimação da assimetria e curtose com a expansão de
+Gram-Charlier}\label{estimacao-da-assimetria-e-curtose-com-a-expansao-de-gram-charlier}
+
+Para a amostra aleatória
+
+\begin{tabular}{l|r|r}
+\hline
+  & Assimetria & Curtose\\
+\hline
+MLE & 0.0000274 & 3.000017\\
+\hline
+Amostra & 0.0917250 & 2.847665\\
+\hline
+\end{tabular}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.x <-}\StringTok{ }\KeywordTok{sort}\NormalTok{(x)}
+\NormalTok{parms <-}\StringTok{ }\KeywordTok{uncons_regionD}\NormalTok{(res}\OperatorTok{$}\NormalTok{par[}\DecValTok{1}\NormalTok{], res}\OperatorTok{$}\NormalTok{par[}\DecValTok{2}\NormalTok{])}
+\KeywordTok{plot}\NormalTok{(.x, }\KeywordTok{dgramcharlier}\NormalTok{(.x, parms[}\DecValTok{1}\NormalTok{], parms[}\DecValTok{2}\NormalTok{]), }\DataTypeTok{type=}\StringTok{'l'}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(.x, }\KeywordTok{dgramcharlier}\NormalTok{(.x, timeDate}\OperatorTok{::}\KeywordTok{skewness}\NormalTok{(x), timeDate}\OperatorTok{::}\KeywordTok{kurtosis}\NormalTok{(x, }\DataTypeTok{method=}\StringTok{'moment'}\NormalTok{)), }\DataTypeTok{type=}\StringTok{'l'}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-15-2.pdf}
+
+Para o IBOVESPA
+
+Assimetria
+
+Curtose
+
+MLE
+
+-0.1230408
+
+4.340982
+
+Amostra
+
+-0.1353708
+
+6.959851
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.x <-}\StringTok{ }\KeywordTok{sort}\NormalTok{(x)}
+\NormalTok{parms <-}\StringTok{ }\KeywordTok{uncons_regionD}\NormalTok{(res}\OperatorTok{$}\NormalTok{par[}\DecValTok{1}\NormalTok{], res}\OperatorTok{$}\NormalTok{par[}\DecValTok{2}\NormalTok{])}
+\KeywordTok{plot}\NormalTok{(.x, }\KeywordTok{dgramcharlier}\NormalTok{(.x, parms[}\DecValTok{1}\NormalTok{], parms[}\DecValTok{2}\NormalTok{]), }\DataTypeTok{type=}\StringTok{'l'}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(.x, }\KeywordTok{dgramcharlier}\NormalTok{(.x, timeDate}\OperatorTok{::}\KeywordTok{skewness}\NormalTok{(x), timeDate}\OperatorTok{::}\KeywordTok{kurtosis}\NormalTok{(x, }\DataTypeTok{method=}\StringTok{'moment'}\NormalTok{)), }\DataTypeTok{type=}\StringTok{'l'}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-18-1.pdf}
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-18-2.pdf}
+
+\subsection{Apêndice}\label{apendice}
+
+\subsubsection{Fórmulas importantes}\label{formulas-importantes}
+
+Produto interno de polinômios Chebyshev-Hermite:
+
+\[
+\int^\infty_{-\infty} e^{-x^2/2} He_n(x) He_m(x) dx = \delta_{mn} n! \sqrt{2\pi}
+\]
+
+\subsection*{Referências}\label{referencias}
+\addcontentsline{toc}{subsection}{Referências}
+
+\hypertarget{refs}{}
+\hypertarget{ref-blinnikov1998}{}
+{[}1{]} S. Blinnikov and R. Moessner, Astronomy and Astrophysics
+Supplement Series \textbf{130}, 193 (1998).
+
+
+\end{document}

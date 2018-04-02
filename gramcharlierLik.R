@@ -3,45 +3,7 @@ library(ggplot2)
 
 # functions ----
 
-dgramcharlier <- function(x, mu3=0, mu4=3) {
-  psi <- function(x) ( 1 + mu3*(x^3 - 3*x)/6 + (mu4 - 3)*(x^4 - 6*x^2 + 3)/24 )
-  dnorm(x)*psi(x)
-}
-
-dgramcharlier_adj <- function(x, mu3=0, mu4=3) {
-  psi <- function(x) ( 1 + mu3*(x^3 - 3*x)/6 + (mu4 - 3)*(x^4 - 6*x^2 + 3)/24 )
-  .gamma <- 1 + (mu3^2)/6 + ((mu4 - 3)^2)/24
-  dnorm(x)*(psi(x)^2)/.gamma
-}
-
-gc_check <- function(x) {
-  function(parms) {
-    gc <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
-    if (any( gc < 0 ))
-      FALSE
-    else
-      TRUE
-  }
-}
-
-gclogLik <- function(x) {
-  function(parms) {
-    gc <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
-    if (any( gc < 0 ))
-      NA
-    else
-      -sum(log(gc))
-  }
-}
-
-gcUnconstrainedlogLik <- function(x) {
-  function(parms) {
-    parms <- uncons_regionD(parms[1], parms[2])
-    gc <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
-    gc <- abs(gc)
-    -sum(log(gc))
-  }
-}
+source('functions.R')
 
 # gc check ----
 
@@ -62,9 +24,20 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=check)) +
 
 # gc loglik ----
 
-x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
-x <- diff(log(x$Adjusted.Close))
+x <- read.csv('BVSP-1993-2014.csv', stringsAsFactors = FALSE)
+x <- transform(x, Date=as.Date(Date))
+x <- x[order(x$Date), c('Adj.Close')]
+x <- diff(log(x))
 x <- scale(x)
+
+# timeDate::skewness(x)
+# timeDate::skewness(scale(x))
+# timeDate::kurtosis(x)
+# timeDate::kurtosis(scale(x))
+
+# x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+# x <- diff(log(x$Adjusted.Close))
+# x <- scale(x)
 
 comb <- expand.grid(mu3=seq(-2, 2, length.out = 100),
                     mu4=seq(0, 20, length.out = 100))
@@ -187,9 +160,32 @@ logLik <- gcUnconstrainedlogLik(x)
 
 res <- optim(c(0, 3), logLik, method='BFGS') # , lower=c(-5, 3), upper=c(5, 7)
 uncons_regionD(res$par[1], res$par[2])
-optim(c(0, 3), logLik, method='L-BFGS-B', lower=c(-1, 3), upper=c(1, 7))
+res <- optim(c(0, 0), logLik, method='L-BFGS-B', lower=c(-10, -10), upper=c(10, 10))
+uncons_regionD(res$par[1], res$par[2])
 
 # plot ----
 
 x <- seq(-5, 5, length.out = 100)
 plot(x, dgramcharlier(x, mu3=1, mu4=3))
+
+# profvis ----
+
+library(profvis)
+
+
+profvis({
+  x <- rnorm(1000) # seq(-5, 5, length.out = 1000) # rnorm(1000)
+  
+  comb <- expand.grid(mu3=seq(-2, 2, length.out = 100),
+                      mu4=seq(0, 10, length.out = 100))
+  logLik <- gc_check(x)
+  z <- sapply(seq_len(dim(comb)[1]), function(i) {
+    parms <- as.numeric(comb[i,])
+    logLik(parms)
+  })
+  
+  comb$check <- z
+  
+  ggplot(comb, aes(x=mu4, y=mu3, colour=check)) +
+    geom_jitter()
+})

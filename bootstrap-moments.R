@@ -1,11 +1,22 @@
 
-x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
-x <- diff(log(x$Adjusted.Close))
-x <- scale(x)
+library(xts)
 
-mu = mean(x)
-sigma = sd(x)
-n = length(x)
+
+x <- Quandl::Quandl('YAHOO/INDEX_BVSP', type = 'xts')
+
+x.s <- x['2003/']
+x.r <- PerformanceAnalytics::Return.calculate(x.s[,'Close'], 'log')
+
+x.r <- scale(x.r)
+plot(x.r)
+
+x.r.s <- rollapply(x.r, 756L, timeDate::skewness)
+plot(x.r.s)
+
+x.r.k <- rollapply(x.r, 756L, timeDate::kurtosis)
+plot(x.r.k)
+
+plot(cbind(coredata(x.r.s), coredata(x.r.k)+3))
 
 sum(x^3)/n
 

@@ -1,8 +1,6 @@
 library(ggplot2)
 
-dgramcharlier <- function(x, mu3=0, mu4=3) {
-  dnorm(x)*( 1 + mu3*(x^3 - 3*x)/6 + (mu4 - 3)*(x^4 - 6*x^2 + 3)/24 )
-}
+source('functions.R')
 
 # valid 1 ----
 

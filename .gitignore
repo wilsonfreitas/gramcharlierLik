@@ -1,5 +1,6 @@
-
 .Rhistory
 .Rproj.user/*
 */estimadores-assimetria-curtose_files/*
 */estimadores-assimetria-curtose_cache/*
+.Rproj.user
+.DS_Store

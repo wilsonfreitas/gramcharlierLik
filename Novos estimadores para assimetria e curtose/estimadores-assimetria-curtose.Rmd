@@ -32,6 +32,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(cowplot)
+library(knitr)
+library(kableExtra)
 ```
 
 ## Resumo
@@ -380,19 +382,27 @@ Com essa transformação analítica elimina-se o problema de restrição da busc
 A Figura \ref{fig:limit-transform} mostra o gráfico da função $g(x)$ aplicada a curtose $\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})$.
 
 Desta forma, a função de log-verossimilhança pode ser reescrita como $l(\mu_3(\mu_3^\prime), \mu_4(\mu_4^\prime); \mathbf{x}) \equiv l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$.
-Assim a função $p(x)$ gerada a partir da expansão de Gram-Charlier passa a atender a restrição de positividade e portanto pode ser considerada uma FDP.
-$p(x)$ pode ser utilizada para encontrar os estimadores de máxima-verossimilhança para assimetria e curtose.
+A função $p(x)$ gerada a partir da expansão de Gram-Charlier passa a atender a restrição de positividade e portanto pode ser considerada uma FDP.
+Esta função pode ser utilizada para encontrar os estimadores de máxima-verossimilhança para assimetria e curtose em um processo de otimização sem restrições funcionais.
 Na próxima sessão será realizada a estimação dos parâmetros para uma amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.
+Será possível notar as diferenças entre esta abordagem e os estimadores amostrais.
 
 ```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:limit-transform} Função $g(x)$ para realizar uma transformação analítica em $\\mu_3$ e $\\mu_4$ de maneira tornar um problema de busca restrito em um problema irrestrito. Aqui tem-se $g(\\mu_4^\\prime, 3, 7)$."}
 ff <- function(x, a, b) a + (b - a)/(1 + exp(-x))
 x_ <- seq(-10, 10, length.out=1000)
 df_ <- data.frame(x=x_, y=ff(x_, 3, 7))
-plot(y ~ x, data=df_, type="l", col="darkgreen", ylab = "g(x)", xlab = "x", cex.lab = 0.8, cex.axis = 0.7)
-abline(h=c(3, 7), col="grey", lty="dashed")
+theme_set(theme_bw(base_size = 9))
+ggplot(df_, aes(x = x, y = y)) + 
+  geom_line() +
+  labs(y = "g(x)", x = "x") +
+  geom_hline(yintercept = c(3,7), colour = "grey", linetype =  "dashed")
+# plot(y ~ x, data=df_, type="l", col="darkgreen", ylab = "g(x)", xlab = "x", cex.lab = 0.8, cex.axis = 0.7)
+# abline(h=c(3, 7), col="grey", lty="dashed")
 ```
 
 ## Estimação da assimetria e curtose com a expansão de Gram-Charlier
+
+
 
 ```{r echo=FALSE}
 gcUnconstrainedlogLik <- function(x) {
@@ -444,60 +454,85 @@ create_uncons_regionD <- function() {
 uncons_regionD <- create_uncons_regionD()
 ```
 
-Para a amostra aleatória
-
-```{r echo=FALSE}
-x <- y_
-logLik <- gcUnconstrainedlogLik(x)
-
-res <- optim(c(0, 3), logLik, method='BFGS')
+```{r echo=FALSE, cache=TRUE}
+logLik <- gcUnconstrainedlogLik(y_)
+res_sample <- optim(c(0, 3), logLik, method='BFGS')
+logLik <- gcUnconstrainedlogLik(bove)
+res_ibov <- optim(c(0, 3), logLik, method='BFGS')
 ```
 
 ```{r results='asis', echo=FALSE}
+# sample
 rows <- rbind(
-  uncons_regionD(res$par[1], res$par[2]),
-  c(timeDate::skewness(x), timeDate::kurtosis(x, method='moment'))
+  uncons_regionD(res_sample$par[1], res_sample$par[2]),
+  c(timeDate::skewness(y_), timeDate::kurtosis(y_, method='moment'))
 )
-colnames(rows) <- c('Assimetria', 'Curtose')
-rownames(rows) <- c("MLE", "Amostra")
-knitr::kable(rows, format="latex")
-```
+rows1 = t(rows)
+rownames(rows1) <- c('Assimetria', 'Curtose')
+colnames(rows1) <- c("MLE", "Amostra")
 
-```{r, fig.show='hold'}
-.x <- sort(x)
-parms <- uncons_regionD(res$par[1], res$par[2])
-plot(.x, dgramcharlier(.x, parms[1], parms[2]), type='l')
-abline(h=0, col="red")
-plot(.x, dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')), type='l')
-abline(h=0, col="red")
-```
+# IBOV
+rows <- rbind(
+  uncons_regionD(res_ibov$par[1], res_ibov$par[2]),
+  c(timeDate::skewness(bove), timeDate::kurtosis(bove, method='moment'))
+)
+rows2 = t(rows)
+rownames(rows2) <- c('Assimetria', 'Curtose')
+colnames(rows2) <- c("MLE", "Amostra")
 
-Para o IBOVESPA
+rows = cbind(rows1, rows2)
+kable(rows, format="latex", booktabs = TRUE,
+      caption = "Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal.") %>%
+  add_header_above(c(" ", "Amostra aleatória" = 2, "IBOVESPA" = 2)) %>%
+  kable_styling(position = "center")
+```
 
 ```{r echo=FALSE}
-x <- bove
-logLik <- gcUnconstrainedlogLik(x)
-
-res <- optim(c(0, 3), logLik, method='BFGS')
-```
-
-```{r results='asis', echo=FALSE}
-rows <- rbind(
-  uncons_regionD(res$par[1], res$par[2]),
-  c(timeDate::skewness(x), timeDate::kurtosis(x, method='moment'))
+# sample
+.x <- sort(y_)
+parms <- uncons_regionD(res_sample$par[1], res_sample$par[2])
+df_ = tibble(
+  x = .x,
+  fdp = dgramcharlier(.x, parms[1], parms[2]),
+  est = 'mle'
 )
-colnames(rows) <- c('Assimetria', 'Curtose')
-rownames(rows) <- c("MLE", "Amostra")
-knitr::kable(rows, format="html")
+df_ = rbind(
+  df_,
+  tibble(
+    x = .x,
+    fdp = dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')),
+    est = 'sample'
+  ))
+df_sample = df_
+# IBOV
+.x <- sort(bove)
+parms <- uncons_regionD(res_ibov$par[1], res_ibov$par[2])
+df_ = tibble(
+  x = .x,
+  fdp = dgramcharlier(.x, parms[1], parms[2]),
+  est = 'mle'
+)
+df_ = rbind(
+  df_,
+  tibble(
+    x = .x,
+    fdp = dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')),
+    est = 'sample'
+  ))
+df_ibov = df_
 ```
 
-```{r, fig.show='hold'}
-.x <- sort(x)
-parms <- uncons_regionD(res$par[1], res$par[2])
-plot(.x, dgramcharlier(.x, parms[1], parms[2]), type='l')
-abline(h=0, col="red")
-plot(.x, dgramcharlier(.x, timeDate::skewness(x), timeDate::kurtosis(x, method='moment')), type='l')
-abline(h=0, col="red")
+```{r, fig.show='hold', echo=FALSE}
+theme_set(theme_bw(base_size = 9))
+gg_sample = ggplot(df_sample, aes(x = x, y = fdp, colour = est)) +
+  geom_line() +
+  theme(legend.position = "top") +
+  labs(colour = "")
+gg_ibov = ggplot(df_ibov, aes(x = x, y = fdp, colour = est)) +
+  geom_line() +
+  theme(legend.position = "top") +
+  labs(colour = "")
+plot_grid(gg_sample, gg_ibov, align = "v", labels = c("(i)", "(ii)"), label_size = 9)
 ```
 
 ## Apêndice

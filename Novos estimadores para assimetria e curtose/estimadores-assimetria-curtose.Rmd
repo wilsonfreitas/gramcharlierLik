@@ -36,7 +36,7 @@ library(knitr)
 library(kableExtra)
 ```
 
-## Resumo
+# Resumo
 
 A estimação da assimetria e da curtose em séries de retornos é explorada neste artigo com o objetivo de prover uma alternativa aos estimadores amostrais comumente utilizados.
 Os estimadores amostrais para assimetria e curtose apresentam grande sensibilidade a novas ocorrências nas séries temporais.
@@ -47,7 +47,7 @@ Utilizamos o método de máxima verossimilhança (MV) para obter a assimetria e 
 Observamos mais estabilidade nestes estimadores do que nos amostrais.
 Esta estabilidade é importante na aplicação da expansão de Gram-Charlier a problemas de finanças, por exemplo o apreçamento de opções.
 
-## Introdução
+# Introdução
 
 Qualquer função de densidade de probabilidade (FDP) pode ser aproximada por uma expansão em série de outra FDP que pertence a um grupo especial, como a distribuição Gaussiana, por exemplo.
 Dada uma amostra, é difícil identificar a melhor distribuição para descrevê-la, logo, a utilização expansões em séries permite associar uma FDP aproximada aos dados.
@@ -64,7 +64,7 @@ Este texto explora o uso da expansão de Gram-Charlier [@blinnikov1998] que é a
 - Sessão 4: resultados
 - Sessão 5: conclusão
 
-## Assimetria e curtose
+# Assimetria e curtose
 
 Seja uma amostra aleatória $\{x_i\}_{i=1...N}$, de média amostral $\mu$ e variância amostral $\sigma^2$.
 Os estimadores amostrais de assimetria $\mu_3$ e curtose $\mu_4$ são definidos como:
@@ -119,7 +119,7 @@ A expansão de Gram-Charlier é apresentada na próxima sessão.
 Através desta expansão chega-se a uma distribuição paramétrica na assimetria e na curtose.
 A partir desta distribuição é possível obter estimadores de máxima verossimilhança para estas grandezas relacionadas a esta distribuição.
 
-## Expansão de Gram-Charlier
+# Expansão de Gram-Charlier
 
 Sob certas condições uma função de distribuição de probabilidade (FDP) $p(x)$, padronizada, pode ser expandida em uma série de derivadas da distribuição Gaussiana padronizada $Z(x) = \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{x^2}{2}\right)$. A expansão em série
 
@@ -186,7 +186,7 @@ Estas séries comumente apresentam desvios da normalidade, como retornos extremo
 
 <!-- Na próxima seção mostraremos como obter os estimadores de máxima-verossimilhança de assimetria e curtose na distribuição de Gram-Charlier obedecendo a restrição de positividade da função de densidade de probabilidade. -->
 
-### Restrições de positividade para $p(x)$
+## Restrições de positividade para $p(x)$
 
 Seja a função $p(x;\mu_3, \mu_4)$ definida na sessão anterior
 
@@ -326,7 +326,7 @@ $$
 onde $d(x) = 4He_3^2(x) - 3He_2(x) He_4(x)$.
 
 Agora é necessário analisar estas equações para determinar as regiões em $x$ para que $\mu_3(x)$ e $\mu_4(x)$ tenham valores válidos.
-Sabemos que $\mu_3(x) \geq 0$ ou $\mu_3(x) < 0$ e que $\mu_4(x) \geq 3$, com base nisso chega-se as seguintes regiões para $x$.
+A Tabela \ref{tab:1} apresenta as regiões de $x$ que atendem as restrições para as equações de $\mu_3(x)$ e $\mu_4(x)$, sabendo que $\mu_3(x) \geq 0$ ou $\mu_3(x) < 0$ e que $\mu_4(x) \geq 3$.
 
 Restrições | Regiões de $x$
 ---------- | --------------
@@ -334,6 +334,8 @@ $\mu_3 < 0$ | $x > \sqrt{3} \cup -\sqrt{3} < x < 0$
 $\mu_3 \geq 0$ | $x \leq -\sqrt{3} \cup 0 < x < \sqrt{3}$
 $\mu_4 < 3$ | $-1 < x < 1$
 $\mu_4 \geq 3$ | $x \geq 1 \cup x \leq -1$
+
+Table: \label{tab:1} Regiões de $x$ que atendem as restrições de $\mu_3(x)$ e $\mu_4(x)$.
 
 Tomando a intercecção das restrições válidas chegamos a 2 conjuntos para $x$
 
@@ -379,7 +381,7 @@ Considerando $\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})$ onde $g(x, l_{i
 Dessa maneira, a partir de $\mu_4^\prime$ (irrestrito) encontramos $\mu_4$ e com isso aplicamos a função que delimita a região oval para encontrar os limites de $\mu_3$ ($\mu_{3,inf}$ e $\mu_{3,sup}$ como função de $\mu_4$).
 Utilizamos a função $\mu_3 = g(\mu_3^\prime, \mu_{3,inf}, \mu_{3,sup})$ para a partir de $\mu_3^\prime$ encontrar $\mu_3$.
 Com essa transformação analítica elimina-se o problema de restrição da busca por $\mu_3$ e $\mu_4$ pois o problema passa a ser posto em termos de $\mu_3^\prime$ e $\mu_4^\prime$.
-A Figura \ref{fig:limit-transform} mostra o gráfico da função $g(x)$ aplicada a curtose $\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})$.
+A Figura \ref{fig:limit-transform} mostra o gráfico da função $g(x)$ aplicada a curtose $\mu_4 = g(\mu_4^\prime, \mu_{4,inf}=3, \mu_{4,sup}=7)$.
 
 Desta forma, a função de log-verossimilhança pode ser reescrita como $l(\mu_3(\mu_3^\prime), \mu_4(\mu_4^\prime); \mathbf{x}) \equiv l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$.
 A função $p(x)$ gerada a partir da expansão de Gram-Charlier passa a atender a restrição de positividade e portanto pode ser considerada uma FDP.
@@ -400,9 +402,15 @@ ggplot(df_, aes(x = x, y = y)) +
 # abline(h=c(3, 7), col="grey", lty="dashed")
 ```
 
-## Estimação da assimetria e curtose com a expansão de Gram-Charlier
+# Estimação da assimetria e curtose com a expansão de Gram-Charlier
 
+Para realizar a estimação de assimetria e curtose via máximização da função de verossimilhança, é necessário ter uma função de verossimilhança, e para definí-la precisamos de uma FDP para descrever a amostra aleatória de interesse.
+Na sessão demostramos que para uma região do espaço paramétrico de assimetria e curtose, a expansão de Gram-Charlier, $p(x)$, é atende às restrições para que seja caracterizada uma FDP.
+Posto isto, definimos a função de log-verossimilhança $l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$, onde $\mu_3 \equiv \mu_3(\mu_3^\prime)$ e $\mu_4 \equiv \mu_4(\mu_4^\prime)$.
+A função de log-verossimilhança definida em função de $\mu_3^\prime$ e $\mu_4^\prime$ é irrestrita e portanto, o processo de otimização para encontrar o seu máximo pode ser realizado sem maiores problemas.
+No processo de otimização são encontrados valores ótimos de $\mu_3^\prime$ e $\mu_4^\prime$ e a partir destes encontramos os valores de assimetria e curtose.
 
+# Conclusão
 
 ```{r echo=FALSE}
 gcUnconstrainedlogLik <- function(x) {
@@ -482,7 +490,7 @@ colnames(rows2) <- c("MLE", "Amostra")
 
 rows = cbind(rows1, rows2)
 kable(rows, format="latex", booktabs = TRUE,
-      caption = "Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal.") %>%
+      caption = "Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.") %>%
   add_header_above(c(" ", "Amostra aleatória" = 2, "IBOVESPA" = 2)) %>%
   kable_styling(position = "center")
 ```
@@ -535,16 +543,26 @@ gg_ibov = ggplot(df_ibov, aes(x = x, y = fdp, colour = est)) +
 plot_grid(gg_sample, gg_ibov, align = "v", labels = c("(i)", "(ii)"), label_size = 9)
 ```
 
-## Apêndice
+```{r echo=FALSE, cache=TRUE}
+skew_kurt = function(x) {
+  logLik <- gcUnconstrainedlogLik(x)
+  res <- optim(c(0, 3), logLik, method='Nelder-Mead')
+  res$par
+}
+r2 = zoo::rollapply(bove, width = 504, skew_kurt)
+r2 = apply(r2, 1, function(x) uncons_regionD(x[1], x[2])) %>% t()
+```
 
-### Fórmulas importantes
+```{r fig.cap="\\label{fig:mle-skewness-kurtosis-ma} O gráfico mostra, na primeira coluna, os estimadores de máxima verossimilhança de assimetria e curtose em janela móvel de 504 dias úteis para a série de retornos padronizados do IBOVESPA. Na segunda coluna, temos os estimadores amostrais. Observa-se claramente a mudança no comportamento dos estimadores. Os estimadores de máxima-verossimilhança são mais estáveis, principalmente a curtose."}
+theme_set(theme_grey(base_size = 9))
+p1 = qplot(tail(rIBOV$date, dim(r2)[1]), r2[,1], geom=c("line", "point"), xlab = "date", ylab = "skewness", size = I(0.3), ylim = c(-0.8, 0.5))
+p2 = qplot(tail(rIBOV$date, dim(r2)[1]), r2[,2], geom=c("line", "point"), xlab = "date", ylab = "kurtosis", size = I(0.3), ylim = c(3, 11))
+r_ = zoo::rollapply(rIBOV$value, width = 504, timeDate::kurtosis, method = "moment")
+p3 = qplot(tail(rIBOV$date, length(r_)), r_, geom=c("line", "point"), xlab = "date", ylab = "kurtosis", size = I(0.3), ylim = c(3, 11))
+r__ = zoo::rollapply(rIBOV$value, width = 504, timeDate::skewness, method = "moment")
+p4 = qplot(tail(rIBOV$date, length(r__)), r__, geom=c("line", "point"), xlab = "date", ylab = "skewness", size = I(0.3), ylim = c(-0.8, 0.5))
+plot_grid(p1, p4, p2, p3, align = "v", labels = c("(i)", "(ii)", "(iii)", "(iv)"), label_size = 9)
+```
 
-Produto interno de polinômios Chebyshev-Hermite:
 
-$$
-\int^\infty_{-\infty} e^{-x^2/2} He_n(x) He_m(x) dx = \delta_{mn} n! \sqrt{2\pi}
-$$
-
-
-
-## Referências
+# Referências

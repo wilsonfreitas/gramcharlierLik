@@ -29,6 +29,46 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
 \usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -101,7 +141,7 @@ expansão de Gram-Charlier}
 \begin{document}
 \maketitle
 
-\subsection{Resumo}\label{resumo}
+\section{Resumo}\label{resumo}
 
 A estimação da assimetria e da curtose em séries de retornos é explorada
 neste artigo com o objetivo de prover uma alternativa aos estimadores
@@ -120,7 +160,7 @@ estimadores do que nos amostrais. Esta estabilidade é importante na
 aplicação da expansão de Gram-Charlier a problemas de finanças, por
 exemplo o apreçamento de opções.
 
-\subsection{Introdução}\label{introducao}
+\section{Introdução}\label{introducao}
 
 Qualquer função de densidade de probabilidade (FDP) pode ser aproximada
 por uma expansão em série de outra FDP que pertence a um grupo especial,
@@ -154,7 +194,7 @@ uma base de polinônmios de Hermite.
   Sessão 5: conclusão
 \end{itemize}
 
-\subsection{Assimetria e curtose}\label{assimetria-e-curtose}
+\section{Assimetria e curtose}\label{assimetria-e-curtose}
 
 Seja uma amostra aleatória \(\{x_i\}_{i=1...N}\), de média amostral
 \(\mu\) e variância amostral \(\sigma^2\). Os estimadores amostrais de
@@ -203,7 +243,7 @@ na curtose. A partir desta distribuição é possível obter estimadores de
 máxima verossimilhança para estas grandezas relacionadas a esta
 distribuição.
 
-\subsection{Expansão de Gram-Charlier}\label{expansao-de-gram-charlier}
+\section{Expansão de Gram-Charlier}\label{expansao-de-gram-charlier}
 
 Sob certas condições uma função de distribuição de probabilidade (FDP)
 \(p(x)\), padronizada, pode ser expandida em uma série de derivadas da
@@ -284,7 +324,7 @@ descrever variáveis aleatórias como séries de retornos. Estas séries
 comumente apresentam desvios da normalidade, como retornos extremos e
 oscilações assimétricas.
 
-\subsubsection{\texorpdfstring{Restrições de positividade para
+\subsection{\texorpdfstring{Restrições de positividade para
 \(p(x)\)}{Restrições de positividade para p(x)}}\label{restricoes-de-positividade-para-px}
 
 Seja a função \(p(x;\mu_3, \mu_4)\) definida na sessão anterior
@@ -412,12 +452,18 @@ sistema é dada por:
 onde \(d(x) = 4He_3^2(x) - 3He_2(x) He_4(x)\).
 
 Agora é necessário analisar estas equações para determinar as regiões em
-\(x\) para que \(\mu_3(x)\) e \(\mu_4(x)\) tenham valores válidos.
-Sabemos que \(\mu_3(x) \geq 0\) ou \(\mu_3(x) < 0\) e que
-\(\mu_4(x) \geq 3\), com base nisso chega-se as seguintes regiões para
-\(x\).
+\(x\) para que \(\mu_3(x)\) e \(\mu_4(x)\) tenham valores válidos. A
+Tabela \ref{tab:1} apresenta as regiões de \(x\) que atendem as
+restrições para as equações de \(\mu_3(x)\) e \(\mu_4(x)\), sabendo que
+\(\mu_3(x) \geq 0\) ou \(\mu_3(x) < 0\) e que \(\mu_4(x) \geq 3\).
 
 \begin{longtable}[]{@{}ll@{}}
+\caption{\label{tab:1} Regiões de \(x\) que atendem as restrições de
+\(\mu_3(x)\) e \(\mu_4(x)\).}\tabularnewline
+\toprule
+Restrições & Regiões de \(x\)\tabularnewline
+\midrule
+\endfirsthead
 \toprule
 Restrições & Regiões de \(x\)\tabularnewline
 \midrule
@@ -483,7 +529,7 @@ elimina-se o problema de restrição da busca por \(\mu_3\) e \(\mu_4\)
 pois o problema passa a ser posto em termos de \(\mu_3^\prime\) e
 \(\mu_4^\prime\). A Figura \ref{fig:limit-transform} mostra o gráfico da
 função \(g(x)\) aplicada a curtose
-\(\mu_4 = g(\mu_4^\prime, \mu_{4,inf}, \mu_{4,sup})\).
+\(\mu_4 = g(\mu_4^\prime, \mu_{4,inf}=3, \mu_{4,sup}=7)\).
 
 Desta forma, a função de log-verossimilhança pode ser reescrita como
 \(l(\mu_3(\mu_3^\prime), \mu_4(\mu_4^\prime); \mathbf{x}) \equiv l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})\).
@@ -505,12 +551,30 @@ problema de busca restrito em um problema irrestrito. Aqui tem-se
 \(g(\mu_4^\prime, 3, 7)\).}
 \end{figure}
 
-\subsection{Estimação da assimetria e curtose com a expansão de
-Gram-Charlier}\label{estimacao-da-assimetria-e-curtose-com-a-expansao-de-gram-charlier}
+\section{Estimação da assimetria e curtose com a expansão de
+Gram-Charlier}\label{sec:meandiff}
+
+Para realizar a estimação de assimetria e curtose via máximização da
+função de verossimilhança, é necessário ter uma função de
+verossimilhança, e para definí-la precisamos de uma FDP para descrever a
+amostra aleatória de interesse. Na sessão demostramos que para uma
+região do espaço paramétrico de assimetria e curtose, a expansão de
+Gram-Charlier, \(p(x)\), é atende às restrições para que seja
+caracterizada uma FDP. Posto isto, definimos a função de
+log-verossimilhança \(l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})\), onde
+\(\mu_3 \equiv \mu_3(\mu_3^\prime)\) e
+\(\mu_4 \equiv \mu_4(\mu_4^\prime)\). A função de log-verossimilhança
+definida em função de \(\mu_3^\prime\) e \(\mu_4^\prime\) é irrestrita e
+portanto, o processo de otimização para encontrar o seu máximo pode ser
+realizado sem maiores problemas. No processo de otimização são
+encontrados valores ótimos de \(\mu_3^\prime\) e \(\mu_4^\prime\) e a
+partir destes encontramos os valores de assimetria e curtose.
+
+\section{Conclusão}\label{conclusao}
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-14}Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal.}
+\caption{\label{tab:unnamed-chunk-14}Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -526,18 +590,33 @@ Curtose & 3.0000166 & 2.847665 & 4.3409819 & 6.9598507\\
 
 \includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-16-1.pdf}
 
-\subsection{Apêndice}\label{apendice}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{theme_set}\NormalTok{(}\KeywordTok{theme_grey}\NormalTok{(}\DataTypeTok{base_size =} \DecValTok{9}\NormalTok{))}
+\NormalTok{p1 =}\StringTok{ }\KeywordTok{qplot}\NormalTok{(}\KeywordTok{tail}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{date, }\KeywordTok{dim}\NormalTok{(r2)[}\DecValTok{1}\NormalTok{]), r2[,}\DecValTok{1}\NormalTok{], }\DataTypeTok{geom=}\KeywordTok{c}\NormalTok{(}\StringTok{"line"}\NormalTok{, }\StringTok{"point"}\NormalTok{), }\DataTypeTok{xlab =} \StringTok{"date"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"skewness"}\NormalTok{, }\DataTypeTok{size =} \KeywordTok{I}\NormalTok{(}\FloatTok{0.3}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\FloatTok{0.8}\NormalTok{, }\FloatTok{0.5}\NormalTok{))}
+\NormalTok{p2 =}\StringTok{ }\KeywordTok{qplot}\NormalTok{(}\KeywordTok{tail}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{date, }\KeywordTok{dim}\NormalTok{(r2)[}\DecValTok{1}\NormalTok{]), r2[,}\DecValTok{2}\NormalTok{], }\DataTypeTok{geom=}\KeywordTok{c}\NormalTok{(}\StringTok{"line"}\NormalTok{, }\StringTok{"point"}\NormalTok{), }\DataTypeTok{xlab =} \StringTok{"date"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"kurtosis"}\NormalTok{, }\DataTypeTok{size =} \KeywordTok{I}\NormalTok{(}\FloatTok{0.3}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{11}\NormalTok{))}
+\NormalTok{r_ =}\StringTok{ }\NormalTok{zoo}\OperatorTok{::}\KeywordTok{rollapply}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{value, }\DataTypeTok{width =} \DecValTok{504}\NormalTok{, timeDate}\OperatorTok{::}\NormalTok{kurtosis, }\DataTypeTok{method =} \StringTok{"moment"}\NormalTok{)}
+\NormalTok{p3 =}\StringTok{ }\KeywordTok{qplot}\NormalTok{(}\KeywordTok{tail}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{date, }\KeywordTok{length}\NormalTok{(r_)), r_, }\DataTypeTok{geom=}\KeywordTok{c}\NormalTok{(}\StringTok{"line"}\NormalTok{, }\StringTok{"point"}\NormalTok{), }\DataTypeTok{xlab =} \StringTok{"date"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"kurtosis"}\NormalTok{, }\DataTypeTok{size =} \KeywordTok{I}\NormalTok{(}\FloatTok{0.3}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{11}\NormalTok{))}
+\NormalTok{r__ =}\StringTok{ }\NormalTok{zoo}\OperatorTok{::}\KeywordTok{rollapply}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{value, }\DataTypeTok{width =} \DecValTok{504}\NormalTok{, timeDate}\OperatorTok{::}\NormalTok{skewness, }\DataTypeTok{method =} \StringTok{"moment"}\NormalTok{)}
+\NormalTok{p4 =}\StringTok{ }\KeywordTok{qplot}\NormalTok{(}\KeywordTok{tail}\NormalTok{(rIBOV}\OperatorTok{$}\NormalTok{date, }\KeywordTok{length}\NormalTok{(r__)), r__, }\DataTypeTok{geom=}\KeywordTok{c}\NormalTok{(}\StringTok{"line"}\NormalTok{, }\StringTok{"point"}\NormalTok{), }\DataTypeTok{xlab =} \StringTok{"date"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"skewness"}\NormalTok{, }\DataTypeTok{size =} \KeywordTok{I}\NormalTok{(}\FloatTok{0.3}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\FloatTok{0.8}\NormalTok{, }\FloatTok{0.5}\NormalTok{))}
+\KeywordTok{plot_grid}\NormalTok{(p1, p4, p2, p3, }\DataTypeTok{align =} \StringTok{"v"}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"(i)"}\NormalTok{, }\StringTok{"(ii)"}\NormalTok{, }\StringTok{"(iii)"}\NormalTok{, }\StringTok{"(iv)"}\NormalTok{), }\DataTypeTok{label_size =} \DecValTok{9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
-\subsubsection{Fórmulas importantes}\label{formulas-importantes}
+\begin{figure}
+\centering
+\includegraphics{estimadores-assimetria-curtose_files/figure-latex/unnamed-chunk-18-1.pdf}
+\caption{\label{fig:mle-skewness-kurtosis-ma} O gráfico mostra, na
+primeira coluna, os estimadores de máxima verossimilhança de assimetria
+e curtose em janela móvel de 504 dias úteis para a série de retornos
+padronizados do IBOVESPA. Na segunda coluna, temos os estimadores
+amostrais. Observa-se claramente a mudança no comportamento dos
+estimadores. Os estimadores de máxima-verossimilhança são mais estáveis,
+principalmente a curtose.}
+\end{figure}
 
-Produto interno de polinômios Chebyshev-Hermite:
-
-\[
-\int^\infty_{-\infty} e^{-x^2/2} He_n(x) He_m(x) dx = \delta_{mn} n! \sqrt{2\pi}
-\]
-
-\subsection*{Referências}\label{referencias}
-\addcontentsline{toc}{subsection}{Referências}
+\section*{Referências}\label{referencias}
+\addcontentsline{toc}{section}{Referências}
 
 \hypertarget{refs}{}
 \hypertarget{ref-blinnikov1998}{}

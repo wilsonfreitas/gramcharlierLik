@@ -1,6 +1,7 @@
 
 rm(list=ls(all.names = TRUE))
 
+library(PDQutils)
 library(nloptr)
 library(fGarch)
 library(DEoptim)
@@ -76,7 +77,7 @@ res_nlminb <- nlminb(st, garch_likelihood, lower=lo, upper=hi, control=list(x.to
 
 res_deoptim1 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(trace = FALSE))
 
-# res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
 
 res_nlopt <- garch_fit_nlopt(st, garch_likelihood, lower=lo, upper=hi)
 

@@ -1,4 +1,5 @@
 
+library(PDQutils)
 library(nloptr)
 library(fGarch)
 library(DEoptim)
@@ -28,7 +29,7 @@ lo <- c(1e-6, 1e-6, 1e-6, -1, 3)
 hi <- c(1e-3, 1, 1, 1, 7)
 st <- c(1e-5, 0.2, 0.7, 0, 3)
 
-garch_likelihood <- .garch_gc_likelihood2(rets)
+garch_likelihood <- .garch_gc_likelihood(rets)
 garch_likelihood(sol_)
 garch_likelihood(lo)
 garch_likelihood(st)
@@ -46,7 +47,7 @@ res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP
 tr_par(res_deoptim2$optim$bestmem)
 garch_likelihood(res_deoptim2$optim$bestmem)
 
-res_nlopt <- garch_fit_nlopt(c(omega, alpha, beta, skew_s, kurt_s), garch_likelihood, lower=lo, upper=hi)
+res_nlopt <- garch_fit_nlopt(st, garch_likelihood, lower=lo, upper=hi)
 tr_par(res_nlopt$solution)
 garch_likelihood(res_nlopt$solution)
 

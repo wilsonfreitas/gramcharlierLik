@@ -246,13 +246,14 @@ h <- hist(z, 10, plot = FALSE)
 comb$llgroups <- cut(z, h$breaks)
 ```
 
-```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:random-heatmap} O gráfico acima é um \\textit{heatmap} da função $l(\\mu_3, \\mu_4; \\mathbf{x})$ para uma amostra aleatória normal. Os valores da função de log-verossimilhança são segmentados de forma que é possível identificar que a região em torno dos momentos populacionais, $\\mu_3=0$ e $\\mu_4 = 3$, apresenta a maior verossimilhança. O ponto marcado com X indica os valores amostrais de assimetria e curtose. Os pontos escuros onde a função de log-verissimilhança é NA indicam que houve divergência no cálculo. Portanto, na região definida por estes pontos a função $p(x)$ apresenta valores negativos, assim como na região de pontos coloridos $p(x)$ apresenta valores não negativos."}
+```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:random-heatmap} O gráfico acima é um \\textit{heatmap} da função $l(\\mu_3, \\mu_4; \\mathbf{x})$ para uma amostra aleatória normal. Os valores da função de log-verossimilhança são segmentados de forma que é possível identificar que a região em torno dos momentos populacionais, $\\mu_3=0$ e $\\mu_4 = 3$, apresenta a maior verossimilhança. O ponto marcado com X indica os valores amostrais de assimetria e curtose. Os pontos escuros onde a função de log-verissimilhança é NA indicam que houve divergência no cálculo. Portanto, na região definida por estes pontos a função $p(x)$ apresenta valores negativos, assim como na região de pontos coloridos $p(x)$ apresenta valores não negativos.", fig.height=3}
 theme_set(theme_bw(base_size = 9))
 ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
   geom_point() +
   labs(x = "kurtosis", y = "skewness", colour = "llh") +
   annotate('text', label='X',
-           y=timeDate::skewness(y), x=timeDate::kurtosis(y, method='moment'))
+           y=timeDate::skewness(y), x=timeDate::kurtosis(y, method='moment')) +
+  guides(colour=FALSE)
 ```
 
 Observando a Figura \ref{fig:random-heatmap} fica claro que há uma região bem definida para a qual os valores de assimetria e curtose produzem uma função $p(x)$ não negativa e portanto, nesta região, $p(x)$ pode ser considerada uma FDP.
@@ -279,13 +280,14 @@ h <- hist(z, 10, plot = FALSE)
 comb$llgroups <- cut(z, h$breaks)
 ```
 
-```{r cache=TRUE, echo=FALSE, fig.cap="\\label{fig:ibovespa-heatmap} O gráfico mostra o \textit{heatmap} da função de log-verossimilhança aplicada a série de retornos padrinizados do IBOVESPA no período de jan/2000 a dez/2017. Nota-se que a região de máxima verossimilhança desloca-se para onde a assimetria é negativa e a curtose é um pouco acima de 4, indicando uma distribuição assimétrica e com caudas pesadas. Entretanto, os estimadores amostrais ficam próximos a borda da região válida, muito distantes da região de máxima verossimilhança."}
+```{r cache=TRUE, echo=FALSE, fig.cap="\\label{fig:ibovespa-heatmap} O gráfico mostra o \textit{heatmap} da função de log-verossimilhança aplicada a série de retornos padrinizados do IBOVESPA no período de jan/2000 a dez/2017. Nota-se que a região de máxima verossimilhança desloca-se para onde a assimetria é negativa e a curtose é um pouco acima de 4, indicando uma distribuição assimétrica e com caudas pesadas. Entretanto, os estimadores amostrais ficam próximos a borda da região válida, muito distantes da região de máxima verossimilhança.", fig.height=3}
 theme_set(theme_bw(base_size = 9))
 ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
   geom_point() +
   labs(x = "kurtosis", y = "skewness", colour = "llh") +
   annotate('text', label='X',
-           y=timeDate::skewness(x), x=timeDate::kurtosis(x, method='moment'))
+           y=timeDate::skewness(x), x=timeDate::kurtosis(x, method='moment')) +
+  guides(colour=FALSE)
 ```
 
 Para utilizarmos a função de log-verossimilhança em um processo numérico para estimar a assimetria e a curtose, é necessário encontrar uma forma funcional para $p(x)$ na qual seja possível tratar as restrições de $\mu_3$ e $\mu_4$ de forma analítica e de preferência, sem condicionais.
@@ -344,7 +346,7 @@ Tomando a intercecção das restrições válidas chegamos a 2 conjuntos para $x
 
 Note que estes conjuntos definem regiões de $x$ onde o polinômio $f(x)$ da expansão de Gram-Charlier é igual a zero e consequentemente, os valores de $\mu_3$ e $\mu_4$ são válidos dentro dessa restrição.
 
-```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:eggs} Regiões de assimetria e curtose para que a expansão de Gram-Charlier seja não negativa. A região maior (azul), onde $x \\in (-\\sqrt{3}, \\sqrt{3})$, admite valores negativos para curtose, o que não é permitido, pois este momento é positivo. A menor região (vermelho) admite valores válidos para assimetria e curtose e $x \\in (-\\infty, -\\sqrt{3}) \\cup (\\sqrt{3}, \\infty)$."}
+```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:eggs} Regiões de assimetria e curtose para que a expansão de Gram-Charlier seja não negativa. A região maior (azul), onde $x \\in (-\\sqrt{3}, \\sqrt{3})$, admite valores negativos para curtose, o que não é permitido, pois este momento é positivo. A menor região (vermelho) admite valores válidos para assimetria e curtose e $x \\in (-\\infty, -\\sqrt{3}) \\cup (\\sqrt{3}, \\infty)$.", fig.height=3.5}
 d_poly <- function(x) {
   2*(x^3 - 3*x)^2 - 1*(x^2 - 1)*(x^4 - 6*x^2 + 3)
 }
@@ -389,7 +391,7 @@ Esta função pode ser utilizada para encontrar os estimadores de máxima-veross
 Na próxima sessão será realizada a estimação dos parâmetros para uma amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.
 Será possível notar as diferenças entre esta abordagem e os estimadores amostrais.
 
-```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:limit-transform} Função $g(x)$ para realizar uma transformação analítica em $\\mu_3$ e $\\mu_4$ de maneira tornar um problema de busca restrito em um problema irrestrito. Aqui tem-se $g(\\mu_4^\\prime, 3, 7)$."}
+```{r echo=FALSE, cache=TRUE, fig.cap="\\label{fig:limit-transform} Função $g(x)$ para realizar uma transformação analítica em $\\mu_3$ e $\\mu_4$ de maneira tornar um problema de busca restrito em um problema irrestrito. Aqui tem-se $g(\\mu_4^\\prime, 3, 7)$.", fig.height=2}
 ff <- function(x, a, b) a + (b - a)/(1 + exp(-x))
 x_ <- seq(-10, 10, length.out=1000)
 df_ <- data.frame(x=x_, y=ff(x_, 3, 7))
@@ -398,17 +400,18 @@ ggplot(df_, aes(x = x, y = y)) +
   geom_line() +
   labs(y = "g(x)", x = "x") +
   geom_hline(yintercept = c(3,7), colour = "grey", linetype =  "dashed")
-# plot(y ~ x, data=df_, type="l", col="darkgreen", ylab = "g(x)", xlab = "x", cex.lab = 0.8, cex.axis = 0.7)
-# abline(h=c(3, 7), col="grey", lty="dashed")
 ```
 
 # Estimação da assimetria e curtose com a expansão de Gram-Charlier
 
 Para realizar a estimação de assimetria e curtose via máximização da função de verossimilhança, é necessário ter uma função de verossimilhança, e para definí-la precisamos de uma FDP para descrever a amostra aleatória de interesse.
-Na sessão demostramos que para uma região do espaço paramétrico de assimetria e curtose, a expansão de Gram-Charlier, $p(x)$, é atende às restrições para que seja caracterizada uma FDP.
+Na sessão anterior demostramos que, para uma região do espaço paramétrico de assimetria e curtose, a expansão de Gram-Charlier, $p(x)$, é atende às restrições para que seja caracterizada como uma FDP.
 Posto isto, definimos a função de log-verossimilhança $l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$, onde $\mu_3 \equiv \mu_3(\mu_3^\prime)$ e $\mu_4 \equiv \mu_4(\mu_4^\prime)$.
 A função de log-verossimilhança definida em função de $\mu_3^\prime$ e $\mu_4^\prime$ é irrestrita e portanto, o processo de otimização para encontrar o seu máximo pode ser realizado sem maiores problemas.
 No processo de otimização são encontrados valores ótimos de $\mu_3^\prime$ e $\mu_4^\prime$ e a partir destes encontramos os valores de assimetria e curtose.
+
+A Figura \ref{fig:mle-skewness-kurtosis-ma} reproduz os resultados da Figura \ref{fig:skewness-kurtosis-ma} utilizando os estimadores de MV.
+Observa-se a estabilidade dos estimadores de MV, pois, eles não apresentam grandes variações causadas por novos entradas de retornos extremos na amostra.
 
 # Conclusão
 
@@ -495,7 +498,7 @@ kable(rows, format="latex", booktabs = TRUE,
   kable_styling(position = "center")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 # sample
 .x <- sort(y_)
 parms <- uncons_regionD(res_sample$par[1], res_sample$par[2])
@@ -530,16 +533,16 @@ df_ = rbind(
 df_ibov = df_
 ```
 
-```{r, fig.show='hold', echo=FALSE}
+```{r, fig.show='hold', echo=FALSE, cache=TRUE, fig.height=2.5}
 theme_set(theme_bw(base_size = 9))
 gg_sample = ggplot(df_sample, aes(x = x, y = fdp, colour = est)) +
   geom_line() +
   theme(legend.position = "top") +
-  labs(colour = "")
+  guides(colour = FALSE)
 gg_ibov = ggplot(df_ibov, aes(x = x, y = fdp, colour = est)) +
   geom_line() +
   theme(legend.position = "top") +
-  labs(colour = "")
+  guides(colour = FALSE, y = FALSE)
 plot_grid(gg_sample, gg_ibov, align = "v", labels = c("(i)", "(ii)"), label_size = 9)
 ```
 
@@ -553,7 +556,7 @@ r2 = zoo::rollapply(bove, width = 504, skew_kurt)
 r2 = apply(r2, 1, function(x) uncons_regionD(x[1], x[2])) %>% t()
 ```
 
-```{r fig.cap="\\label{fig:mle-skewness-kurtosis-ma} O gráfico mostra, na primeira coluna, os estimadores de máxima verossimilhança de assimetria e curtose em janela móvel de 504 dias úteis para a série de retornos padronizados do IBOVESPA. Na segunda coluna, temos os estimadores amostrais. Observa-se claramente a mudança no comportamento dos estimadores. Os estimadores de máxima-verossimilhança são mais estáveis, principalmente a curtose."}
+```{r echo=FALSE, fig.cap="\\label{fig:mle-skewness-kurtosis-ma} O gráfico mostra, na primeira coluna, os estimadores de máxima verossimilhança de assimetria e curtose em janela móvel de 504 dias úteis para a série de retornos padronizados do IBOVESPA. Na segunda coluna, temos os estimadores amostrais. Observa-se claramente a mudança no comportamento dos estimadores. Os estimadores de máxima-verossimilhança são mais estáveis, principalmente a curtose."}
 theme_set(theme_grey(base_size = 9))
 p1 = qplot(tail(rIBOV$date, dim(r2)[1]), r2[,1], geom=c("line", "point"), xlab = "date", ylab = "skewness", size = I(0.3), ylim = c(-0.8, 0.5))
 p2 = qplot(tail(rIBOV$date, dim(r2)[1]), r2[,2], geom=c("line", "point"), xlab = "date", ylab = "kurtosis", size = I(0.3), ylim = c(3, 11))

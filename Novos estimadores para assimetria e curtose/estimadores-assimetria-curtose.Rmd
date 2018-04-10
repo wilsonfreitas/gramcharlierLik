@@ -404,12 +404,30 @@ ggplot(df_, aes(x = x, y = y)) +
 
 # Estimação da assimetria e curtose com a expansão de Gram-Charlier
 
-Para realizar a estimação de assimetria e curtose via máximização da função de verossimilhança, é necessário ter uma função de verossimilhança, e para definí-la precisamos de uma FDP para descrever a amostra aleatória de interesse.
-Na sessão anterior demostramos que, para uma região do espaço paramétrico de assimetria e curtose, a expansão de Gram-Charlier, $p(x)$, é atende às restrições para que seja caracterizada como uma FDP.
-Posto isto, definimos a função de log-verossimilhança $l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$, onde $\mu_3 \equiv \mu_3(\mu_3^\prime)$ e $\mu_4 \equiv \mu_4(\mu_4^\prime)$.
-A função de log-verossimilhança definida em função de $\mu_3^\prime$ e $\mu_4^\prime$ é irrestrita e portanto, o processo de otimização para encontrar o seu máximo pode ser realizado sem maiores problemas.
-No processo de otimização são encontrados valores ótimos de $\mu_3^\prime$ e $\mu_4^\prime$ e a partir destes encontramos os valores de assimetria e curtose.
+Para realizar a estimação de assimetria e curtose via máximização da função de verossimilhança, é necessário ter uma função de verossimilhança e, para definí-la, precisamos de uma FDP que descreva a amostra aleatória de interesse.
+Na sessão anterior foi demostrado que, para uma região do espaço paramétrico de assimetria e curtose, a expansão de Gram-Charlier, $p(x)$, é atende às condições para que seja caracterizada como uma FDP.
+A limitação do espaço paramétrico torna o processo de busca pelos parâmetros restrito.
+Para contornar esta restrição, foi realizada a transformação de variáveis de $(\mu_3, \mu_4) \rightarrow (\mu_3^\prime, \mu_4^\prime)$, tornando o problema restrito em $(\mu_3, \mu_4)$ em um problema irrestrito em $(\mu_3^\prime, \mu_4^\prime)$.
+Foi definida a função de log-verossimilhança $l(\mu_3^\prime, \mu_4^\prime; \mathbf{x})$ irrestrita, onde $\mu_3 \equiv \mu_3(\mu_3^\prime)$ e $\mu_4 \equiv \mu_4(\mu_4^\prime)$.
+O processo de otimização para encontrar a máxima verossimilhança pode ser realizado sem maiores problemas no espaço $(\mu_3^\prime, \mu_4^\prime)$.
+Os valores ótimos de $\mu_3^\prime$ e $\mu_4^\prime$ são encontrados e a partir destes são obtidos os valores de assimetria e curtose.
 
+A Tabela \ref{tab:mv-results} apresenta uma comparação entre os estimadores amostrais e os de MV para a amostra normal aleatória e a série de retornos padronizados do IBOVESPA.
+Para a amostra aleatória, a curtose via MV é praticamente igual a 3 enquanto o estimador amostral é menor que 3.
+A assimetria via MV é próxima de zero e o estimador amostral tem duas casas decimais.
+A avaliação com a amostra aleatória é interessante porque os parâmetros, de assimetria e curtos, são conhecidos a priori, e os estimadores de MV são mais próximos dos valores populacionais que os estimadores amostrais.
+Os resultados para a série do IBOVESPA são mais interessantes porque neles a assimetria não apresenta uma grande divergência, entretanto, as curtoses são bastente diferentes.
+Contudo, a curtose amostral está dentro da região de validade do estimador, logo, a FDP gerada com estes parâmetros é válida.
+
+Ambos estimadores, amostrais e MV, apresentam valores válidos, contudo, é importante avaliar distribuição produzida por estes estimadores.
+A Figura \ref{fig:gc-dist} apresenta as funções de densidade geradas com os parâmetros amostrais e com os de MV.
+No gráfico referente a amostra aleatória, que é normal, observa-se um pequeno desvio entre as distribuições geradas pelos dois estimadores (vermelha é MV e azul é amostral).
+Entretanto, para a série do IBOVESPA as distribuições geradas apresentam comportamentos bastante distintos.
+A distribuição com os estimadores amostrais (azul) é multimodal de uma forma que não representa os dados observados.
+Portanto, mesmo apresentando valores válidos de assimetria e curtose para que $p(x)$ seja uma FDP, o resultado não gera uma distribuição que condiz com o comportamento observado da variável.
+
+Outra avaliação importante é a evolução dos estimadores ao longo do tempo.
+Na Figura \ref{fig:skewness-kurtosis-ma} observamos o comportamento dos estimadores amostrais ao longo do tempo em uma janela móvel.
 A Figura \ref{fig:mle-skewness-kurtosis-ma} reproduz os resultados da Figura \ref{fig:skewness-kurtosis-ma} utilizando os estimadores de MV.
 Observa-se a estabilidade dos estimadores de MV, pois, eles não apresentam grandes variações causadas por novos entradas de retornos extremos na amostra.
 
@@ -493,7 +511,7 @@ colnames(rows2) <- c("MLE", "Amostra")
 
 rows = cbind(rows1, rows2)
 kable(rows, format="latex", booktabs = TRUE,
-      caption = "Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.") %>%
+      caption = "\\label{tab:mv-results} Resultados do cálculo dos estimadores de assimetria e curtose: máxima-verossimilhança e amostral, para a amostra aleatória normal e para a série de retornos padronizados do IBOVESPA.") %>%
   add_header_above(c(" ", "Amostra aleatória" = 2, "IBOVESPA" = 2)) %>%
   kable_styling(position = "center")
 ```
@@ -533,7 +551,7 @@ df_ = rbind(
 df_ibov = df_
 ```
 
-```{r, fig.show='hold', echo=FALSE, cache=TRUE, fig.height=2.5}
+```{r, fig.show='hold', echo=FALSE, cache=TRUE, fig.height=2.5, fig.cap="\\label{fig:gc-dist} Os gráficos das funções de densidade de probabilidade da expansão de Gram-Charlier, em vermelho temos os estimadores de MV e em azul os estimadores amostrais. O gráfico (i) traz a FDP que representa da amostra aleatória e (ii) representa a série de retornos padronizados do IBOVESPA. Note a distribuição multimodal para os retornos do IBOVESPA com os parâmetros amostrais."}
 theme_set(theme_bw(base_size = 9))
 gg_sample = ggplot(df_sample, aes(x = x, y = fdp, colour = est)) +
   geom_line() +

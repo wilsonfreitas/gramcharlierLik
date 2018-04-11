@@ -58,12 +58,6 @@ Portanto, se os dados apresentam assimetria e curtose, a distribuição Gaussian
 As expansões de FDPs em séries têm aplicações em diversos campos da ciência como a Física e Finanças.
 Este texto explora o uso da expansão de Gram-Charlier [@blinnikov1998] que é a expansão da distribuição Gaussiana em uma base de polinônmios de Hermite.
 
-- Sessão 1: assimetria e curtose
-- Sessão 2: expansão de Gram-Charlier
-- Sessão 3: estimação da assimetria e curtose com a expansão de Gram-Charlier
-- Sessão 4: resultados
-- Sessão 5: conclusão
-
 # Assimetria e curtose
 
 Seja uma amostra aleatória $\{x_i\}_{i=1...N}$, de média amostral $\mu$ e variância amostral $\sigma^2$.
@@ -127,7 +121,7 @@ $$
 p(x) \sim \sum_{n=0}^\infty c_n \frac{d^n Z(x)}{dx^n}
 $$
 
-é uma série de Gram-Charlier (de tipo-A) [REF] e de acordo com a fórmula de Rodriguez [REF]
+é uma série de Gram-Charlier (de tipo-A) e de acordo com a fórmula de Rodriguez
 
 $$
 He_n(x) = (-1)^n \exp\left( \frac{x^2}{2} \right) \frac{d^n}{dx^n} \exp\left( -\frac{x^2}{2} \right)
@@ -431,8 +425,6 @@ Na Figura \ref{fig:skewness-kurtosis-ma} observamos o comportamento dos estimado
 A Figura \ref{fig:mle-skewness-kurtosis-ma} reproduz os resultados da Figura \ref{fig:skewness-kurtosis-ma} utilizando os estimadores de MV.
 Observa-se a estabilidade dos estimadores de MV, pois, eles não apresentam grandes variações causadas por novos entradas de retornos extremos na amostra.
 
-# Conclusão
-
 ```{r echo=FALSE}
 gcUnconstrainedlogLik <- function(x) {
   function(parms) {
@@ -585,5 +577,22 @@ p4 = qplot(tail(rIBOV$date, length(r__)), r__, geom=c("line", "point"), xlab = "
 plot_grid(p1, p4, p2, p3, align = "v", labels = c("(i)", "(ii)", "(iii)", "(iv)"), label_size = 9)
 ```
 
+# Conclusão
+
+Os estimadores de MV para assimetria e curtose usando a expansão de Gram-Charlier são calculados para uma amostra aleatória e para a série de retornos padronizados do IBOVESPA em um intervalo de 17 anos.
+Observa-se que, tanto para a série completa, como para sub-intervalos de 2 anos, os estimadores de MV são bem comportados.
+A assimetria e a curtose estimados via máxima verossimilhança produzem uma distribuição coerente com os dados observados, diferente dos estimadores amostrais.
+Os resultados dos estimadores de MV aplicados a uma janela móvel também mostram a estabilidade destes estimadores.
+As séries em janela móvel não apresentam mudanças de nível abruptas semelhantes às séries dos estimadores amostrais.
+Esta estabilidade é relevantes pois permite avaliar mudanças de regime mais fundamentais no comportamento das séries.
+Por exemplo, na Figura \ref{fig:mle-skewness-kurtosis-ma} observa-se que a assimetria dos retornos do IBOVESPA muda de sinal entre 2010 e 2013, deixando de ser negativa.
+Este comportamento também está presente no estimador amostral, entretanto, com um caráter mais errático, tornando difícil caracterizar a mudança de regime.
+Na mesma figura também é possível observar a curtose, que apresenta um comportamento difícil de caracterizar nos estimadores amostrais, enquanto nos estimadores de MV observa-se um crescimento suave entre 2005 e 2015.
+
+A expansão de Gram-Charlier também é aplicada a formulações fechadas para o apreçamento de opções, e desta forma, assimetria e curtose são parâmetros do modelo, e portanto, a robustez na estimação é fator determinante na aplicação do modelo.
+
+A estibilidade dos parâmetros estimados via máxima verossimilhança e os resultados coerentes quando se aplica estes parâmetros a expansão de Gram-Charlier confirmam que estes estimadores são mais indicados para medir assimetria e curtose do que os estimadores amostrais.
+Principalmente quando aplicados ativos financeiros, como retorno de ações.
+A utilização da expansão de Gram-Charlier é conveniente por ser uma extensão da distribuição normal e por prover parâmetros claros para avaliar a simetria da distribuição dos dados, assim como a presença de eventos extremos, distantes da média.
 
 # Referências

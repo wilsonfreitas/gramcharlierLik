@@ -3,6 +3,7 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
+        "filePattern": "\\.R$",
         "hooks": [
           {
             "type": "command",

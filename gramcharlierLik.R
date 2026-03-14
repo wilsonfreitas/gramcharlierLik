@@ -13,7 +13,7 @@ comb <- expand.grid(mu3=seq(-2, 2, length.out = 100),
                     mu4=seq(0, 10, length.out = 100))
 logLik <- gc_check(x)
 z <- sapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   logLik(parms)
 })
 
@@ -35,7 +35,10 @@ x <- scale(x)
 # timeDate::kurtosis(x)
 # timeDate::kurtosis(scale(x))
 
-# x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+# x <- read.csv(
+#   'https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv
+#   ?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc',
+#   colClasses=c('Date'='Date'))
 # x <- diff(log(x$Adjusted.Close))
 # x <- scale(x)
 
@@ -44,7 +47,7 @@ comb <- expand.grid(mu3=seq(-2, 2, length.out = 100),
 
 logLik <- gclogLik(x)
 z <- sapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   logLik(parms)
 })
 
@@ -70,7 +73,10 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=ll)) +
 # gc unconstrained loglik ----
 
 x <- rnorm(1000)
-# x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+# x <- read.csv(
+#   'https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv
+#   ?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc',
+#   colClasses=c('Date'='Date'))
 # x <- diff(log(x$Adjusted.Close))
 # x <- scale(x)
 
@@ -79,7 +85,7 @@ comb <- expand.grid(mu3=seq(-10, 10, length.out=100),
 
 logLik <- gcUnconstrainedlogLik(x)
 z <- sapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   # p <- uncons_regionD(parms[1], parms[2])
   # l <- logLik(parms)
   # c(p, l)
@@ -107,7 +113,12 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=ll)) +
 
 # compare logLik ----
 
-x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+bvsp_url <- paste0('https://www.quandl.com/api/v1/',
+                   'datasets/YAHOO/INDEX_BVSP.csv',
+                   '?&trim_start=1997-03-12',
+                   '&trim_end=2014-03-31',
+                   '&sort_order=desc')
+x <- read.csv(bvsp_url, colClasses=c('Date'='Date'))
 x <- diff(log(x$Adjusted.Close))
 x <- scale(x)
 
@@ -116,7 +127,7 @@ comb <- expand.grid(mu3=seq(-1.5, 1.5, length.out = 100),
 
 logLik <- gclogLik(x)
 z <- sapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   logLik(parms)
 })
 
@@ -130,7 +141,7 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
 x <- rnorm(1000)
 logLik <- gclogLik(x)
 z <- sapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   logLik(parms)
 })
 
@@ -142,7 +153,7 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
   geom_jitter()
 
 # opt <- optim(c(0, 3), logLik, method='L-BFGS-B', lower=c(-0.5, 0), upper=c(0.5, 8))
-# 
+#
 # ggplot(comb, aes(x=mu4, y=mu3)) +
 #   geom_tile(aes(fill=ll)) +
 #   annotate('text', label='X',
@@ -152,7 +163,12 @@ ggplot(comb, aes(x=mu4, y=mu3, colour=llgroups)) +
 
 # optim ----
 
-x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+bvsp_url <- paste0('https://www.quandl.com/api/v1/',
+                   'datasets/YAHOO/INDEX_BVSP.csv',
+                   '?&trim_start=1997-03-12',
+                   '&trim_end=2014-03-31',
+                   '&sort_order=desc')
+x <- read.csv(bvsp_url, colClasses=c('Date'='Date'))
 x <- diff(log(x$Adjusted.Close))
 x <- scale(x)
 
@@ -175,17 +191,17 @@ library(profvis)
 
 profvis({
   x <- rnorm(1000) # seq(-5, 5, length.out = 1000) # rnorm(1000)
-  
+
   comb <- expand.grid(mu3=seq(-2, 2, length.out = 100),
                       mu4=seq(0, 10, length.out = 100))
   logLik <- gc_check(x)
   z <- sapply(seq_len(dim(comb)[1]), function(i) {
-    parms <- as.numeric(comb[i,])
+    parms <- as.numeric(comb[i, ])
     logLik(parms)
   })
-  
+
   comb$check <- z
-  
+
   ggplot(comb, aes(x=mu4, y=mu3, colour=check)) +
     geom_jitter()
 })

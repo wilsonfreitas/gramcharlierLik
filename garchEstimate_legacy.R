@@ -2,9 +2,18 @@
 source('functions.R')
 
 x <- garchSim(garchSpec(list(omega=1e-6, alpha=0.1, beta=0.8), cond.dist = "norm"), n=2500)
-# x <- read.csv('https://www.quandl.com/api/v1/datasets/YAHOO/INDEX_BVSP.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
-# https://www.quandl.com/api/v3/datasets/YAHOO/SA_PETR3.csv?api_key=nJ1NhTYdEs2p3MsS4CVd
-# x <- read.csv('https://www.quandl.com/api/v3/datasets/YAHOO/SA_PETR3.csv?&trim_start=1997-03-12&trim_end=2014-03-31&sort_order=desc', colClasses=c('Date'='Date'))
+# x <- read.csv(
+#   paste0('https://www.quandl.com/api/v1/datasets/YAHOO/',
+#          'INDEX_BVSP.csv?&trim_start=1997-03-12',
+#          '&trim_end=2014-03-31&sort_order=desc'),
+#   colClasses=c('Date'='Date'))
+# https://www.quandl.com/api/v3/datasets/YAHOO/
+#   SA_PETR3.csv?api_key=nJ1NhTYdEs2p3MsS4CVd
+# x <- read.csv(
+#   paste0('https://www.quandl.com/api/v3/datasets/YAHOO/',
+#          'SA_PETR3.csv?&trim_start=1997-03-12',
+#          '&trim_end=2014-03-31&sort_order=desc'),
+#   colClasses=c('Date'='Date'))
 # x <- diff(log(x$Adjusted.Close))
 # x <- scale(x)
 
@@ -38,7 +47,8 @@ hi <- c(100*abs(mu), 1-small, 1-small, 10, 10)
 garch_likelihood <- .garch_likelihood(rets)
 # optimization
 # res <- optim(c(omega, alpha, beta), garch_likelihood, lower=lo, upper=hi, method='L-BFGS-B')
-res <- nlminb(c(omega, alpha, beta, skew, kurt), garch_likelihood, lower=lo, upper=hi, control=list(x.tol=1e-8, trace=0))
+res <- nlminb(c(omega, alpha, beta, skew, kurt), garch_likelihood,
+              lower=lo, upper=hi, control=list(x.tol=1e-8, trace=0))
 
 garch_likelihood <- .garch_likelihood(rets - mu)
 small <- 1e-8
@@ -48,7 +58,11 @@ res <- nlminb(c(omega, alpha, beta), garch_likelihood, lower=lo, upper=hi, contr
 res <- optim(res$par, garch_likelihood, lower=lo, upper=hi, method = "L-BFGS-B")
 res <- DEoptim(garch_likelihood, lower=lo, upper=hi)
 summary(res)
-res <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+               DEoptim.control(NP=100, itermax = 100,
+                               storepopfrom = 1,
+                               storepopfreq = 2,
+                               strategy=2, trace=FALSE))
 summary(res)
 plot(res, plot.type="bestvalit", type='l')
 plot(res, plot.type="bestmemit", type='l')
@@ -72,7 +86,11 @@ res <- nlminb(c(omega, alpha, beta, 0, -10), garch_likelihood, lower=lo, upper=h
 res <- optim(c(omega, alpha, beta, skew, kurt), garch_likelihood, lower=lo, upper=hi, method = "L-BFGS-B")
 res <- DEoptim(garch_likelihood, lower=lo, upper=hi)
 summary(res)
-res <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 200, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+               DEoptim.control(NP=100, itermax = 200,
+                               storepopfrom = 1,
+                               storepopfreq = 2,
+                               strategy=2, trace=FALSE))
 summary(res)
 plot(res, plot.type="bestvalit", type='l')
 plot(res, plot.type="bestmemit", type='l')
@@ -80,7 +98,7 @@ parms <- res$par
 
 garch_likelihood(c(1e-6, 0.1, 0.8, skewness(x), kurtosis(x, method = 'moment')))
 
-# omega         alpha1        beta1 
+# omega         alpha1        beta1
 # 0.0000083917  0.1087357     0.8735381
 # 0.0000010     0.2556101     0.8765230
 
@@ -102,7 +120,8 @@ library(DEoptim)
 
 rastrigin <- function(x) 10*length(x)+sum(x^2-10*cos(2*pi*x))
 
-est.ras <- DEoptim(rastrigin,lower=c(-5,-5),upper=c(5,5), control=list(storepopfrom=1, trace=FALSE))
+est.ras <- DEoptim(rastrigin, lower=c(-5, -5), upper=c(5, 5),
+                   control=list(storepopfrom=1, trace=FALSE))
 
 shaffer <- function(parms) {
   x <- parms[1]
@@ -116,12 +135,19 @@ summary(est.ras)
 plot(est.ras, plot.type="bestvalit", type='l')
 plot(est.ras, plot.type="bestmemit", type='b')
 
-est.ras <- DEoptim(shaffer, lower=c(-5, -5), upper=c(5, 5), DEoptim.control(itermax = 500, storepopfrom = 1, storepopfreq = 2))
+est.ras <- DEoptim(shaffer, lower=c(-5, -5), upper=c(5, 5),
+                   DEoptim.control(itermax = 500,
+                                   storepopfrom = 1,
+                                   storepopfreq = 2))
 summary(est.ras)
 plot(est.ras, plot.type="bestvalit", type='l')
 plot(est.ras, plot.type="bestmemit", type='l')
 
-est.ras <- DEoptim(shaffer, lower=c(-5, -5), upper=c(5, 5), DEoptim.control(itermax = 500, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+est.ras <- DEoptim(shaffer, lower=c(-5, -5), upper=c(5, 5),
+                   DEoptim.control(itermax = 500,
+                                   storepopfrom = 1,
+                                   storepopfreq = 2,
+                                   strategy=2, trace=FALSE))
 summary(est.ras)
 plot(est.ras, plot.type="bestvalit", type='l')
 plot(est.ras, plot.type="bestmemit", type='l')

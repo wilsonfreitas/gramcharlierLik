@@ -6,7 +6,7 @@ source('functions.R')
 
 valid_dgramcharlier <- function(x) {
   function(parms) {
-    y <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
+    y <- dgramcharlier(x, mu3=parms[1], mu4=parms[2]) # nolint: object_usage_linter.
     # as.numeric(y < 0)
     factor(y < 0, levels=c(FALSE, TRUE))
   }
@@ -18,7 +18,7 @@ comb <- expand.grid(mu3=seq(-0.5, 0.5, length.out = 50),
 
 valid <- valid_dgramcharlier(x)
 z <- lapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   v <- valid(parms)
   data.frame(check=v, x=seq_along(v), y=parms[1])
 })
@@ -31,12 +31,12 @@ ggplot(k, aes(x=x, y=y)) +
 # valid 2 ----
 
 polycoefs <- function(mu3, mu4) {
-  c5 <- -(mu4 - 3)/12
+  c5 <- -(mu4 - 3)/12 # nolint: object_usage_linter.
 }
 
 valid_dgramcharlier <- function(x) {
   function(parms) {
-    y <- dgramcharlier(x, mu3=parms[1], mu4=parms[2])
+    y <- dgramcharlier(x, mu3=parms[1], mu4=parms[2]) # nolint: object_usage_linter.
     # as.numeric(y < 0)
     any(y < 0)
   }
@@ -48,7 +48,7 @@ comb <- expand.grid(mu3=seq(-0.5, 0.5, length.out = 50),
 
 valid <- valid_dgramcharlier(x)
 z <- lapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   v <- valid(parms)
   data.frame(check=v, x=seq_along(v), y=parms[1])
 })

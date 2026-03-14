@@ -5,17 +5,17 @@ library(fGarch)
 library(DEoptim)
 source('functions.R')
 
-omega = 1e-6
-alpha = 0.1
-beta = 0.8
-skew = -0.1
-kurt = 5
+omega <- 1e-6
+alpha <- 0.1
+beta <- 0.8
+skew <- -0.1
+kurt <- 5
 
-skip = 100
-size = 1000 + skip
+skip <- 100
+size <- 1000 + skip
 et <- local({
   rnd_ <- runif(size)
-  qapx_cf(rnd_, moment2cumulant(c(0,1, skew, kurt)))
+  qapx_cf(rnd_, moment2cumulant(c(0, 1, skew, kurt)))
 })
 
 # rets <- garchSim(garchSpec(list(omega=1e-6, alpha=0.1, beta=0.8), cond.dist = "norm"), n=10000)
@@ -43,7 +43,12 @@ res_deoptim1 <- DEoptim(garch_likelihood, lower=lo, upper=hi)
 tr_par(res_deoptim1$optim$bestmem)
 garch_likelihood(res_deoptim1$optim$bestmem)
 
-res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+                        DEoptim.control(NP=100, itermax = 100,
+                                        storepopfrom = 1,
+                                        storepopfreq = 2,
+                                        strategy=2,
+                                        trace=FALSE))
 tr_par(res_deoptim2$optim$bestmem)
 garch_likelihood(res_deoptim2$optim$bestmem)
 
@@ -56,4 +61,3 @@ res <- cbind(res, -apply(res, 1, garch_likelihood))
 colnames(res) <- c('omega', 'alpha', 'beta', 'skewness', 'kurtosis', 'llh')
 rownames(res) <- c('solution', 'nlminb', 'nlopt', 'DEoptim', 'DEoptim (tuned)')
 res
-

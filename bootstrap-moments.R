@@ -2,10 +2,10 @@
 library(xts)
 
 
-x = rbcb::get_series(c(IBOVESPA = 7),
-                        start_date = "2000-01-01",
-                        end_date = "2017-12-31", as = "xts")
-x = na.omit(x)
+x <- rbcb::get_series(c(IBOVESPA = 7),
+                      start_date = "2000-01-01",
+                      end_date = "2017-12-31", as = "xts")
+x <- na.omit(x)
 
 x.s <- x['2003/']
 x.r <- PerformanceAnalytics::Return.calculate(x.s, 'log')

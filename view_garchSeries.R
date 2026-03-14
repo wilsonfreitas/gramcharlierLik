@@ -20,14 +20,14 @@ lines(-sqrt(s2)*qnorm(0.95), type='l', col='magenta')
 # garch-gc ----
 
 sol_ <- c(
-  omega = 1e-6,
-  alpha = 0.1,
-  beta = 0.8,
-  skew = -0.1,
-  kurt = 5)
+          omega = 1e-6,
+          alpha = 0.1,
+          beta = 0.8,
+          skew = -0.1,
+          kurt = 5)
 
-skip = 100
-size = 100 + skip
+skip <- 100
+size <- 100 + skip
 et <- qapx_cf(runif(size), moment2cumulant(c(0, 1, sol_['skew'], sol_['kurt'])))
 
 rets <- garch_sim(sol_['omega'], sol_['alpha'], sol_['beta'], et)

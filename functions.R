@@ -52,8 +52,8 @@ mu4 <-function(x) {
 
 regionD <- function(x) {
   dm <- cbind(x=x, mu3=mu3(x), mu4=mu4(x))
-  idx <- order(dm[,'mu4'])
-  dm[idx,]
+  idx <- order(dm[, 'mu4'])
+  dm[idx, ]
 }
 
 adj_seq <- function(start, end, a=-3, length.out=100) {
@@ -64,7 +64,7 @@ adj_seq <- function(start, end, a=-3, length.out=100) {
 create_uncons_regionD <- function() {
   x <- adj_seq(sqrt(3), 100)
   rd <- regionD(x)
-  rd_curve <- approxfun(c(3, rd[,'mu4'], 7), c(0, rd[,'mu3'], 0))
+  rd_curve <- approxfun(c(3, rd[, 'mu4'], 7), c(0, rd[, 'mu3'], 0))
   ff <- function(x, a, b) a + (b - a)/(1 + exp(-x))
   function(mu3p, mu4p) {
     mu4 <- ff(mu4p, 3, 7)
@@ -99,16 +99,16 @@ library(zoo)
     omega <- x[1]
     alpha <- x[2]
     beta <- x[3]
-    
+
     parms <- uncons_regionD(x[4], x[5])
     skew <- parms[1]
     kurt <- parms[2]
-    
+
     garch <- var.garch(.rets, omega, alpha, beta)
     dens_ <- dgramcharlier(.rets/sqrt(garch), mu3=skew, mu4=kurt)/sqrt(garch)
     # dens_ <- dens_[-1]
     dens_[dens_ < 0] <- 0
-    
+
     - sum( log( dens_ ) )
   }
 }
@@ -118,12 +118,12 @@ library(zoo)
     omega <- x[1]
     alpha <- x[2]
     beta <- x[3]
-    
+
     garch <- var.garch(.rets, omega, alpha, beta)
     dens_ <- dgramcharlier(.rets[-1]/sqrt(garch), mu3=x[4], mu4=x[5])/sqrt(garch)
     dens_ <- dens_[-1]
     dens_ <- abs(dens_)
-    
+
     - sum( log( dens_ ) )
   }
 }
@@ -166,39 +166,39 @@ tr_par <- function(par) {
 }
 
 garch_fit_nlopt <- function(start, objective, lower, upper) {
-  
+
   gl_d_omega <- function(...) {
     x <- c(...)
     shock <- 1e-7
     ( objective(c(x[1]+shock, x[2], x[3], x[4], x[5])) - objective(c(x[1]-shock, x[2], x[3], x[4], x[5])) )/(2*shock)
   }
-  
+
   gl_d_alpha <- function(...) {
     x <- c(...)
     shock <- 1e-3
     ( objective(c(x[1], x[2]+shock, x[3], x[4], x[5])) - objective(c(x[1], x[2]-shock, x[3], x[4], x[5])) )/(2*shock)
   }
-  
+
   gl_d_beta <- function(...) {
     x <- c(...)
     shock <- 1e-2
     ( objective(c(x[1], x[2], x[3]+shock, x[4], x[5])) - objective(c(x[1], x[2], x[3]-shock, x[4], x[5])) )/(2*shock)
   }
-  
+
   gl_d_skewness <- function(...) {
     x <- c(...)
     shock <- 1e-2
     ( objective(c(x[1], x[2], x[3], x[4]+shock, x[5])) - objective(c(x[1], x[2], x[3], x[4]-shock, x[5])) )/(2*shock)
   }
-  
+
   gl_d_kurtosis <- function(...) {
     x <- c(...)
     shock <- 1e-2
     ( objective(c(x[1], x[2], x[3], x[4], x[5]+shock)) - objective(c(x[1], x[2], x[3], x[4], x[5]-shock)) )/(2*shock)
   }
-  
+
   # optimization
-  
+
   eval_grad_f0 <- function(x) {
     c(gl_d_omega(x[1], x[2], x[3], x[4], x[5]),
       gl_d_alpha(x[1], x[2], x[3], x[4], x[5]),
@@ -207,15 +207,15 @@ garch_fit_nlopt <- function(start, objective, lower, upper) {
       gl_d_kurtosis(x[1], x[2], x[3], x[4], x[5])
     )
   }
-  
+
   eval_g0 <- function(x) {
     sum(x[2:3]) - 1
   }
-  
+
   eval_jac_g0 <- function(x) {
     c(0, 1, 1, 0, 0)
   }
-  
+
   # optimization
   res <- nloptr::nloptr(x0 = start,
                         eval_f = objective,
@@ -226,9 +226,9 @@ garch_fit_nlopt <- function(start, objective, lower, upper) {
                         eval_jac_g_ineq = eval_jac_g0,
                         opts = list(algorithm="NLOPT_LD_MMA",
                                     xtol_rel=1.0e-8, maxeval=100, print_level=3))
-  
+
   message(res$message)
-  
+
   res
 }
 
@@ -242,18 +242,18 @@ garch_sim <- function(omega, alpha, beta, et, skip=100) {
       omega + alpha*r^2 + beta*h
     }
   }
-  
+
   g11 <- .garch_var(omega, alpha, beta)
-  
+
   h_ <- numeric(length(et))
   r_ <- numeric(length(et))
-  h_[1] = omega/(1-alpha-beta)
-  r_[1] = sqrt(h_[1]) * et[1]
+  h_[1] <- omega/(1-alpha-beta)
+  r_[1] <- sqrt(h_[1]) * et[1]
   for (ix in 2:length(et)) {
-    h_[ix] = g11(r_[ix-1], h_[ix-1])
-    r_[ix] = sqrt(h_[ix]) * et[ix]
+    h_[ix] <- g11(r_[ix-1], h_[ix-1])
+    r_[ix] <- sqrt(h_[ix]) * et[ix]
   }
-  
+
   tail(r_, length(et)-skip)
 }
 

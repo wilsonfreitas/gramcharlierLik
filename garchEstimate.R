@@ -29,7 +29,12 @@ res_optim <- optim(st, garch_likelihood, lower=lo, upper=hi, method = "L-BFGS-B"
 
 res_deoptim1 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(trace = FALSE))
 
-res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+                        DEoptim.control(NP=100, itermax = 100,
+                                        storepopfrom = 1,
+                                        storepopfreq = 2,
+                                        strategy=2,
+                                        trace=FALSE))
 
 res <- rbind(sol_, res_nlminb$par, res_optim$par, res_deoptim1$optim$bestmem, res_deoptim2$optim$bestmem, fit@fit$par)
 res <- cbind(res, -apply(res, 1, garch_likelihood))

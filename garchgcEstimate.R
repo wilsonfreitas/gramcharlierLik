@@ -9,8 +9,8 @@ source('functions.R')
 
 sol_ <- c(omega=1e-6, alpha=0.1, beta=0.8, skew=-Inf, kurt=-Inf)
 
-skip = 100
-size = 1000 + skip
+skip <- 100
+size <- 1000 + skip
 et <- local({
   rnd_ <- runif(size)
   parms_ <- uncons_regionD(sol_['skew'], sol_['kurt'])
@@ -34,11 +34,18 @@ res_nlminb <- nlminb(st, garch_likelihood, lower=lo, upper=hi, control=list(x.to
 
 res_deoptim1 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(trace = FALSE))
 
-res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+                        DEoptim.control(NP=100, itermax = 100,
+                                        storepopfrom = 1,
+                                        storepopfreq = 2,
+                                        strategy=2,
+                                        trace=FALSE))
 
 res_nlopt <- garch_fit_nlopt(st, garch_likelihood, lower=lo, upper=hi)
 
-res <- rbind(sol_, res_nlminb$par, res_nlopt$solution, res_deoptim1$optim$bestmem, res_deoptim2$optim$bestmem)
+res <- rbind(sol_, res_nlminb$par, res_nlopt$solution,
+             res_deoptim1$optim$bestmem,
+             res_deoptim2$optim$bestmem)
 res <- cbind(res, -apply(res, 1, garch_likelihood))
 res <- t(apply(res, 1, format_par))
 colnames(res) <- c('omega', 'alpha', 'beta', 'skewness', 'kurtosis', 'llh')
@@ -52,8 +59,8 @@ print(res)
 
 sol_ <- c(omega=1e-6, alpha=0.1, beta=0.8, skew=-1, kurt=-1)
 
-skip = 100
-size = 5000 + skip
+skip <- 100
+size <- 5000 + skip
 et <- local({
   rnd_ <- runif(size)
   parms_ <- uncons_regionD(sol_['skew'], sol_['kurt'])
@@ -77,15 +84,19 @@ res_nlminb <- nlminb(st, garch_likelihood, lower=lo, upper=hi, control=list(x.to
 
 res_deoptim1 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(trace = FALSE))
 
-res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi, DEoptim.control(NP=100, itermax = 100, storepopfrom = 1, storepopfreq = 2, strategy=2, trace=F))
+res_deoptim2 <- DEoptim(garch_likelihood, lower=lo, upper=hi,
+                        DEoptim.control(NP=100, itermax = 100,
+                                        storepopfrom = 1,
+                                        storepopfreq = 2,
+                                        strategy=2,
+                                        trace=FALSE))
 
 res_nlopt <- garch_fit_nlopt(st, garch_likelihood, lower=lo, upper=hi)
 
 res <- rbind(sol_,
              res_nlminb$par,
              res_nlopt$solution,
-             res_deoptim1$optim$bestmem # , res_deoptim2$optim$bestmem
-)
+             res_deoptim1$optim$bestmem) # , res_deoptim2$optim$bestmem
 res <- cbind(res, -apply(res, 1, garch_likelihood))
 res <- t(apply(res, 1, format_par))
 colnames(res) <- c('omega', 'alpha', 'beta', 'skewness', 'kurtosis', 'llh')
@@ -97,7 +108,12 @@ print(res)
 
 # real asset ----
 
-rets <- read.csv('https://www.quandl.com/api/v3/datasets/GOOG/BVMF_VALE5.csv?&trim_start=2003-06-02&trim_end=2016-06-02&sort_order=desc', colClasses=c('Date'='Date'))
+rets_url <- paste0('https://www.quandl.com/api/v3/',
+                   'datasets/GOOG/BVMF_VALE5.csv',
+                   '?&trim_start=2003-06-02',
+                   '&trim_end=2016-06-02',
+                   '&sort_order=desc')
+rets <- read.csv(rets_url, colClasses=c('Date'='Date'))
 rets <- diff(log(rets$Close))
 rets <- rets - mean(rets)
 

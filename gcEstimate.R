@@ -7,17 +7,17 @@ source('functions.R')
 
 # ----
 
-omega = 1e-6
-alpha = 0.1
-beta = 0.8
-skew = -0.1
-kurt = 4
+omega <- 1e-6
+alpha <- 0.1
+beta <- 0.8
+skew <- -0.1
+kurt <- 4
 
-skip = 100
-size = 1000 + skip
+skip <- 100
+size <- 1000 + skip
 et <- local({
   rnd_ <- runif(size)
-  qapx_cf(rnd_, moment2cumulant(c(0,1, skew, kurt)))
+  qapx_cf(rnd_, moment2cumulant(c(0, 1, skew, kurt)))
 })
 
 logLik <- gcUnconstrainedlogLik(et)

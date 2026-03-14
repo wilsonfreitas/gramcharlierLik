@@ -1,6 +1,6 @@
 
 obj <- function(x, mu3=0, mu4=3) {
-  f <- function(x) 1 + (mu3/6)*(x^3 - 3*x) + ((mu4 - 3)/24)*(x^4 - 6*x^2 + 3) 
+  f <- function(x) 1 + (mu3/6)*(x^3 - 3*x) + ((mu4 - 3)/24)*(x^4 - 6*x^2 + 3)
   -2*x*f(x) + (mu3/2)*(x^2 - 1) + ((mu4 - 3)/6)*(x^3 - 3*x)
 }
 
@@ -38,7 +38,7 @@ comb <- expand.grid(mu3=seq(-0.5, 0.5, length.out = 50),
                     mu4=seq(2, 8, length.out = 50))
 
 z <- lapply(seq_len(dim(comb)[1]), function(i) {
-  parms <- as.numeric(comb[i,])
+  parms <- as.numeric(comb[i, ])
   data.frame(mu3=parms[1], mu4=parms[2], ncoefs=valid_dgramcharlier(parms))
 })
 

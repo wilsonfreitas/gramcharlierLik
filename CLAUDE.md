@@ -17,9 +17,11 @@ This is an interactive R research project (not a package). Open `gramcharlierLik
 Rscript setup.R
 
 # Render all R Markdown papers (PDF by default)
-Rscript render.R          # PDF only
-Rscript render.R html     # HTML only
-Rscript render.R all      # both PDF and HTML
+Rscript render.R                   # render all files as PDF
+Rscript render.R html              # render all files as HTML
+Rscript render.R all               # render all files as PDF and HTML
+Rscript render.R pdf pricing       # render pricing paper as PDF
+Rscript render.R pdf estimadores   # render estimadores paper as PDF
 
 # Source individual analysis scripts in R
 source("functions.R")
